@@ -43,7 +43,7 @@ public final class ProxyServerManager extends Plugin {
             getProxy().getPluginManager().registerCommand(this, new Report(this, command));
         }
 
-        getProxy().getPluginManager().registerListener(this, new LoginListener());
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerListener(this, new LogoutListener());
         getProxy().getPluginManager().registerListener(this, new MoveListener());
         getProxy().getPluginManager().registerListener(this, new ChatListener());

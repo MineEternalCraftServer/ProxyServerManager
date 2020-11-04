@@ -30,7 +30,7 @@ public class McToDiscord extends Command {
             return;
         }
         switch (args[0]){
-            case "link":
+            case "sync":
                 if (number.containsKey(sender)){
                     sender.sendMessage(new ComponentBuilder("§cあなたはすでに連携を申請中です。\n§cしばらく待ってからもう一度試してください。\n" +
                             "§cYou are already in the process of requesting an account sync.\n§cPlease wait a while and try again.").create());

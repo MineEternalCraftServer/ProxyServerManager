@@ -8,9 +8,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PlayerData extends Thread {
+
+    ProxyServerManager plugin = null;
+    ProxiedPlayer p = null;
+
+    public PlayerData(ProxiedPlayer player, ProxyServerManager plugin){
+        this.plugin = plugin;
+        this.p = player;
+    }
+
     public void run(){
-        ProxyServerManager plugin = null;
-        ProxiedPlayer p = null;
         MySQLManager mysql = new MySQLManager(plugin, "PlayerData");
         ResultSet rs_player_data = mysql.query("SELECT * FROM player_data WHERE uuid='" + p.getUniqueId() + "';");
         ResultSet rs_punish_player_data = mysql.query("SELECT * FROM punish_player_data WHERE uuid='" + p.getUniqueId() + "';");
