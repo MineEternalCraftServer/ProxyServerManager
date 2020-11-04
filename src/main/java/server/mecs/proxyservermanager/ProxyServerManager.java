@@ -8,6 +8,10 @@ import server.mecs.proxyservermanager.commands.privatemessage.TellCommand;
 import server.mecs.proxyservermanager.commands.report.Report;
 import server.mecs.proxyservermanager.commands.staffmessage.StaffMessage;
 import server.mecs.proxyservermanager.discord.Discord;
+import server.mecs.proxyservermanager.listeners.ChatListener;
+import server.mecs.proxyservermanager.listeners.LoginListener;
+import server.mecs.proxyservermanager.listeners.LogoutListener;
+import server.mecs.proxyservermanager.listeners.MoveListener;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -22,6 +26,7 @@ public final class ProxyServerManager extends Plugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+
         for ( String command : new String[]{"tell", "msg", "message", "m", "w", "t"}) {
             getProxy().getPluginManager().registerCommand(this, new TellCommand(this, command));
         }
@@ -37,6 +42,12 @@ public final class ProxyServerManager extends Plugin {
         for (String command : new String[]{"report"}){
             getProxy().getPluginManager().registerCommand(this, new Report(this, command));
         }
+
+        getProxy().getPluginManager().registerListener(this, new LoginListener());
+        getProxy().getPluginManager().registerListener(this, new LogoutListener());
+        getProxy().getPluginManager().registerListener(this, new MoveListener());
+        getProxy().getPluginManager().registerListener(this, new ChatListener());
+
         history = new HashMap<>();
         loadConfig();
     }
