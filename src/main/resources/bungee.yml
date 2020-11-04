@@ -1,0 +1,3 @@
+name: ProxyServerManager
+version: @version@
+main: server.mecs.proxyservermanager.ProxyServerManager
