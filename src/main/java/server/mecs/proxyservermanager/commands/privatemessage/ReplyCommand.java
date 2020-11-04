@@ -4,10 +4,12 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import server.mecs.proxyservermanager.ProxyServerManager;
+import server.mecs.proxyservermanager.utils.HistoryUtil;
 
 public class ReplyCommand extends TellCommand {
 
     private ProxyServerManager plugin;
+    private HistoryUtil util;
 
     public ReplyCommand(ProxyServerManager plugin, String name) {
         super(plugin, name);
@@ -17,7 +19,7 @@ public class ReplyCommand extends TellCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        String recieverName = plugin.getHistory(sender.getName());
+        String recieverName = util.getHistory(sender.getName());
 
         // 引数が無いときは、現在の会話相手を表示して終了する。
         if ( args.length == 0 ) {
@@ -37,7 +39,7 @@ public class ReplyCommand extends TellCommand {
             return;
         }
         ProxiedPlayer reciever = plugin.getProxy().getPlayer(
-                plugin.getHistory(sender.getName()));
+                util.getHistory(sender.getName()));
         if ( reciever == null ) {
             sendMessage(sender, "§cメッセージ送信先が見つかりません。\n" +
                     "§cThe destination for the message was not found.");

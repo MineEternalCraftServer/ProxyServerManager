@@ -10,6 +10,7 @@ import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.japanize.JapanizeType;
 import server.mecs.proxyservermanager.japanize.Japanizer;
+import server.mecs.proxyservermanager.utils.HistoryUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class TellCommand extends Command {
     static public ArrayList<UUID> viewlist;
 
     public ProxyServerManager plugin;
+    public HistoryUtil util;
 
     public TellCommand(ProxyServerManager plugin, String name) {
         super(name);
@@ -91,7 +93,7 @@ public class TellCommand extends Command {
         sendMessage(sender, endmsg);
         sendMessage(reciever, endmsg);
         //履歴をput
-        plugin.putHistory(reciever.getName(), sender.getName());
+        util.putHistory(reciever.getName(), sender.getName());
         // コンソールに表示設定なら、コンソールに表示する
         plugin.getLogger().info(endmsg);
         // 権限もちで、かつviewモードがon さらに送信者でも受け取り者でもなければ 個チャを表示
