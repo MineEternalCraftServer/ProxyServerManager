@@ -4,7 +4,6 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import server.mecs.proxyservermanager.ProxyServerManager;
-import server.mecs.proxyservermanager.threads.getNick;
 
 public class MoveListener implements Listener {
 
@@ -12,7 +11,5 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void onMove(ServerConnectedEvent e){
-        getNick nick = new getNick(plugin, e.getPlayer());
-        nick.start();
     }
 }

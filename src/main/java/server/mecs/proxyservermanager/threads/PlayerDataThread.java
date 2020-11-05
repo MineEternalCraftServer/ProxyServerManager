@@ -7,12 +7,12 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PlayerData extends Thread {
+public class PlayerDataThread extends Thread {
 
     ProxyServerManager plugin = null;
     ProxiedPlayer p = null;
 
-    public PlayerData(ProxiedPlayer player, ProxyServerManager plugin){
+    public PlayerDataThread(ProxiedPlayer player, ProxyServerManager plugin){
         this.plugin = plugin;
         this.p = player;
     }
@@ -49,7 +49,6 @@ public class PlayerData extends Thread {
                 plugin.NickMap.put(p.getUniqueId(), rs_check_nicked.getString("_Value"));
             }
         } catch (SQLException e) {
-            plugin.NickMap.put(p.getUniqueId(), p.getDisplayName());
         }
         try {
             rs_player_data.close();
