@@ -37,7 +37,7 @@ public class Report extends Command {
         Date now = null;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        plugin.discord.eb.setTitle("**新規Serverレポートが届きました！**", null);
+        plugin.discord.eb.setTitle("**ServerReport**", null);
         plugin.discord.eb.setColor(new Color(0, 255, 255));
         plugin.discord.eb.setDescription(format.format(now));
         plugin.discord.eb.addField("**[Description]**", "**[Sender]** `" + sender + "`\n \n`" + message + "`", false);

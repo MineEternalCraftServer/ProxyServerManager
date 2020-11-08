@@ -42,8 +42,8 @@ create table punish_log
     target_mcid varchar(16) null,
     target_uuid varchar(36) null,
     punish_type varchar(128) null,
-    punish_reason message_text null,
+    punish_reason text null,
     punish_date datetime null,
     constraint punish_log
         primary key (id)
-)
+);

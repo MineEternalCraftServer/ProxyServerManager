@@ -35,13 +35,10 @@ public class CheckBanned extends Thread {
         }
     }
 
-    public Boolean isBanned(ProxyServerManager plugin, String mcid){
+    public static boolean isBanned(ProxyServerManager plugin, String mcid){
         CheckBanned checkBanned = new CheckBanned(plugin, mcid);
         checkBanned.start();
-        if (isBanned){
-            return true;
-        }
-        return false;
+        return isBanned;
     }
 
 }

@@ -165,6 +165,7 @@ public class MySQLManager {
             this.connection.close();
             this.MySQL.close(this.connection);
 
+            plugin.getLogger().info("closed " + this.conName);
         } catch (SQLException var4) {
         }
 

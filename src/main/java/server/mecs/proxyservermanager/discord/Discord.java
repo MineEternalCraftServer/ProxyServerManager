@@ -8,12 +8,17 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import server.mecs.proxyservermanager.ProxyServerManager;
+import server.mecs.proxyservermanager.commands.discord.McToDiscord;
+import server.mecs.proxyservermanager.threads.CheckSynced;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 public class Discord extends ListenerAdapter {
     public ProxyServerManager plugin = null;
@@ -115,7 +120,7 @@ public class Discord extends ListenerAdapter {
             channel.sendMessage(eb.build()).queue();
             eb.clear();
 
-            eb.setTitle("**新規Discordレポートが届きました！**", null);
+            eb.setTitle("**DiscordReport**", null);
             eb.setColor(Color.GREEN);
             eb.setDescription(format.format(now));
             eb.addField("**[Description]**", "**[Sender]** <@" + e.getAuthor().getId() + ">\n \n`" + message + "`", false);
@@ -129,10 +134,47 @@ public class Discord extends ListenerAdapter {
     @Override public void onPrivateMessageReceived(PrivateMessageReceivedEvent e){
         if (e.getMessage().getAuthor().getIdLong() == botID)return;
         try {
-            e.getMessage().getContentDisplay();
+            Integer.parseInt(e.getMessage().getContentDisplay());
         }catch (NumberFormatException ex){
-            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nThe ID is not the correct number.").queue();
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\n" +
+                    "The ID is not the correct number.").queue();
+            return;
         }
+
+        ProxiedPlayer player = getKeyByValue(McToDiscord.number, Integer.parseInt(e.getMessage().getContentDisplay()));
+        Long id =  e.getMessage().getAuthor().getIdLong();
+        Integer ID = Integer.parseInt(e.getMessage().getContentDisplay());
+
+        if (!(McToDiscord.number.containsValue(ID))){
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
+            return;
+        }
+
+        try{
+            if (CheckSynced.isSynced(plugin, player.getName())){
+                e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
+                return;
+            }
+        }catch (NullPointerException ex){
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
+            return;
+        }
+
+        if (CheckSynced.isSynced(plugin, e.getMessage().getAuthor().getIdLong())){
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
+            return;
+        }
+
+
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
 }
