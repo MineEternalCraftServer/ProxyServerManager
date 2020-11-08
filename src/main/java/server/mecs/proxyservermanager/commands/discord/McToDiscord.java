@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
+import server.mecs.proxyservermanager.threads.AccountUnSync;
 import server.mecs.proxyservermanager.threads.CheckSynced;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class McToDiscord extends Command {
 
     ProxyServerManager plugin;
 
-    public static Map<ProxiedPlayer, Integer> number = new HashMap<>();
+    public static Map<String, Integer> number = new HashMap<>();
 
     public McToDiscord(ProxyServerManager plugin, String name){
         super(name);
@@ -50,19 +51,27 @@ public class McToDiscord extends Command {
                         "§cYou have already synced your account.").create());
                 return;
             }
-            number.put((ProxiedPlayer)sender, new Random().nextInt(9999 - 1000) + 1000);
+            number.put(sender.getName(), new Random().nextInt(9999 - 1000) + 1000);
             sender.sendMessage(new ComponentBuilder("§aあなたの認証IDは §b" + number.get(sender) + "§a です。\n" +
                     "§aこの認証IDをDiscordのMECS Bot#2386のDMに送信してください。\n" +
                     "§aYour authentication ID is §b" + number.get(sender) + "\n" +
                     "§aPlease send this authentication ID to the direct message on MECS Bot#2386.").create());
-            return;
+        }
+
+        if (args[0] == "unsync"){
+            if (CheckSynced.isSynced(plugin, sender.getName())){
+                AccountUnSync.AccountUnSync(plugin, sender.getName());
+                sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
+                        "§aYour account has been unsynced.").create());
+            }
+            sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +
+                    "§cYou have not synced your account.").create());
         }
 
         if (args[0] == "cancel"){
             number.remove(sender);
-            sender.sendMessage(new ComponentBuilder("§a同期申請をキャンセルしました。\n" +
+            sender.sendMessage(new ComponentBuilder("§aアカウント同期申請をキャンセルしました。\n" +
                     "§aCancelled your synchronization request.").create());
-            return;
         }
     }
 }

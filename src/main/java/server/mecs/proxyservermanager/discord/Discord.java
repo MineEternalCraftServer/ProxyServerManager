@@ -5,13 +5,15 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.threads.AccountSync;
+import server.mecs.proxyservermanager.threads.AccountUnSync;
 import server.mecs.proxyservermanager.threads.CheckSynced;
 
 import javax.security.auth.login.LoginException;
@@ -141,7 +143,7 @@ public class Discord extends ListenerAdapter {
             return;
         }
 
-        ProxiedPlayer player = getKeyByValue(McToDiscord.number, Integer.parseInt(e.getMessage().getContentDisplay()));
+        String player = getKeyByValue(McToDiscord.number, Integer.parseInt(e.getMessage().getContentDisplay()));
         Long id =  e.getMessage().getAuthor().getIdLong();
         Integer ID = Integer.parseInt(e.getMessage().getContentDisplay());
 
@@ -151,7 +153,7 @@ public class Discord extends ListenerAdapter {
         }
 
         try{
-            if (CheckSynced.isSynced(plugin, player.getName())){
+            if (CheckSynced.isSynced(plugin, player)){
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
                 return;
             }
@@ -168,10 +170,20 @@ public class Discord extends ListenerAdapter {
         try{
             AccountSync.AccountSync(plugin, player, id);
             guild.addRoleToMember(id, guild.getRoleById(753582521685377034L));
-            guild.modifyNickname(guild.getMemberById(id), player.getName());
+            guild.modifyNickname(guild.getMemberById(id), player);
             e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
         }catch (Exception ex){
             e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
+        }
+    }
+
+    @Override public void onGuildMemberJoin(GuildMemberJoinEvent e){
+        guild.modifyNickname(e.getMember(), "An_Unlinked_Player").queue();
+    }
+
+    @Override public void onGuildMemberRemove(GuildMemberRemoveEvent e){
+        if (CheckSynced.isSynced(plugin, e.getMember().getIdLong())){
+            AccountUnSync.AccountUnSync(plugin, e.getMember().getIdLong());
         }
     }
 

@@ -5,7 +5,7 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import server.mecs.proxyservermanager.ProxyServerManager;
-import server.mecs.proxyservermanager.threads.PlayerDataThread;
+import server.mecs.proxyservermanager.threads.CheckBanned;
 
 public class LoginListener implements Listener {
 
@@ -17,8 +17,10 @@ public class LoginListener implements Listener {
 
     @EventHandler
     public void onLogin(PostLoginEvent e){
-        PlayerDataThread playerdata = new PlayerDataThread(e.getPlayer(), plugin);
-        playerdata.start();
+        if (CheckBanned.isBanned(plugin, e.getPlayer().getName())){
+
+        }
+
         ProxyServer.getInstance().broadcast(e.getPlayer().getDisplayName() + "§ehas joined the network.");
     }
 }
