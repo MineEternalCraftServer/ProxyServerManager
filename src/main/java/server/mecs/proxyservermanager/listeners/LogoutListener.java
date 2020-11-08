@@ -5,6 +5,7 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import server.mecs.proxyservermanager.ProxyServerManager;
+import server.mecs.proxyservermanager.threads.LogoutLog;
 
 public class LogoutListener implements Listener {
 
@@ -14,6 +15,9 @@ public class LogoutListener implements Listener {
     public void onLogout(PlayerDisconnectEvent e){
         plugin.NickMap.remove(e.getPlayer().getUniqueId());
         plugin.MuteMap.remove(e.getPlayer().getUniqueId());
+
+        LogoutLog.LogoutLog(plugin, e.getPlayer());
+
         ProxyServer.getInstance().broadcast(e.getPlayer().getDisplayName() + "§ehas left the network.");
     }
 }
