@@ -39,6 +39,13 @@ public class CheckSynced extends Thread {
                 }
             } catch (SQLException e) {
             }
+
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            mysql.close();
         }
 
         if (id != null){
@@ -52,6 +59,13 @@ public class CheckSynced extends Thread {
                 isSynced = false;
             } catch (SQLException e) {
             }
+
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            mysql.close();
         }
     }
 

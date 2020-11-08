@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.commands.discord.McToDiscord;
+import server.mecs.proxyservermanager.threads.AccountSync;
 import server.mecs.proxyservermanager.threads.CheckSynced;
 
 import javax.security.auth.login.LoginException;
@@ -136,8 +137,7 @@ public class Discord extends ListenerAdapter {
         try {
             Integer.parseInt(e.getMessage().getContentDisplay());
         }catch (NumberFormatException ex){
-            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\n" +
-                    "The ID is not the correct number.").queue();
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nThe ID is not the correct number.").queue();
             return;
         }
 
@@ -165,7 +165,14 @@ public class Discord extends ListenerAdapter {
             return;
         }
 
-
+        try{
+            AccountSync.AccountSync(plugin, player, id);
+            guild.addRoleToMember(id, guild.getRoleById(753582521685377034L));
+            guild.modifyNickname(guild.getMemberById(id), player.getName());
+            e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
+        }catch (Exception ex){
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
+        }
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
