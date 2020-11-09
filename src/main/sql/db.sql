@@ -4,8 +4,8 @@ create table player_data
     mcid varchar(16) null,
     uuid varchar(36) null,
     discord_link varchar(32) null,
-    isBanned boolean false,
-    isMuted boolean false,
+    isBanned boolean default false,
+    isMuted boolean default false,
     ban_reason text null,
     mute_reason text null,
     constraint player_data_pk

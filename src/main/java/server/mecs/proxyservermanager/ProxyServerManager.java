@@ -5,6 +5,9 @@ import net.md_5.bungee.config.Configuration;
 import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.commands.privatemessage.ReplyCommand;
 import server.mecs.proxyservermanager.commands.privatemessage.TellCommand;
+import server.mecs.proxyservermanager.commands.punishment.BanCommand;
+import server.mecs.proxyservermanager.commands.punishment.KickCommand;
+import server.mecs.proxyservermanager.commands.punishment.MuteCommand;
 import server.mecs.proxyservermanager.commands.report.Report;
 import server.mecs.proxyservermanager.commands.staffmessage.StaffMessage;
 import server.mecs.proxyservermanager.discord.Discord;
@@ -44,6 +47,15 @@ public final class ProxyServerManager extends Plugin {
         }
         for (String command : new String[]{"report"}){
             getProxy().getPluginManager().registerCommand(this, new Report(this, command));
+        }
+        for (String command : new String[]{"ban"}){
+            getProxy().getPluginManager().registerCommand(this, new BanCommand(this, command));
+        }
+        for (String command : new String[]{"mute"}){
+            getProxy().getPluginManager().registerCommand(this, new MuteCommand(this, command));
+        }
+        for (String command : new String[]{"kick"}){
+            getProxy().getPluginManager().registerCommand(this, new KickCommand(this, command));
         }
 
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));

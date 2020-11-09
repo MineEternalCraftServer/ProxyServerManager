@@ -15,11 +15,10 @@ import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.threads.AccountSync;
 import server.mecs.proxyservermanager.threads.AccountUnSync;
 import server.mecs.proxyservermanager.threads.CheckSynced;
+import server.mecs.proxyservermanager.utils.getDate;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,15 +42,14 @@ public class Discord extends ListenerAdapter {
 
     public Long botID = 749010040199053434L;
 
-    Date now = null;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String date = new getDate().getDate();
 
     public void staffmessage(String message){
         eb.setTitle("**StaffMessage**", null);
 
         eb.setColor(Color.RED);
 
-        eb.setDescription(format.format(now));
+        eb.setDescription(date);
 
         eb.addField("**[Description]**", message, false);
 
@@ -105,13 +103,13 @@ public class Discord extends ListenerAdapter {
             return;
         }
 
-        String report = e.getMessage().getContentDisplay();
+        String emessage = e.getMessage().getContentDisplay();
         String message = e.getMessage().getContentDisplay().replace("/report", "");
         MessageChannel channel = e.getChannel();
 
-        if (report.indexOf("/report") == 0) {
+        if (emessage.indexOf("/report") == 0) {
             if (e.getMessage().getContentRaw() == "/report") {
-                eb.setColor(Color.GREEN);
+                eb.setColor(Color.RED);
                 eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.\n/report <requirement>");
                 channel.sendMessage(eb.build()).queue();
                 eb.clear();
@@ -125,12 +123,45 @@ public class Discord extends ListenerAdapter {
 
             eb.setTitle("**DiscordReport**", null);
             eb.setColor(Color.GREEN);
-            eb.setDescription(format.format(now));
+            eb.setDescription(date);
             eb.addField("**[Description]**", "**[Sender]** <@" + e.getAuthor().getId() + ">\n \n`" + message + "`", false);
 
             receivereport(eb.build());
 
             eb.clear();
+        }
+
+        if (emessage.indexOf("/ban") == 0){
+            boolean hasRole = false;
+            for (int i=0; i<guild.getMemberById(e.getAuthor().getId()).getRoles().size(); i++){
+                if("Admin".equals(guild.getMemberById(e.getAuthor().getId()).getRoles().get(i).getName())){
+                    hasRole = true;
+                }
+                if("Moderator".equals(guild.getMemberById(e.getAuthor().getId()).getRoles().get(i).getName())){
+                    hasRole = true;
+                }
+            }
+
+            if (!hasRole){
+                eb.setColor(Color.RED);
+                eb.setDescription("<@" + e.getAuthor().getId() + ">\nあなたには権限がありません。\nYou do not have permission to use this command.");
+                channel.sendMessage(eb.build()).queue();
+                eb.clear();
+                return;
+            }
+
+            if (e.getMessage().getContentRaw() == "/ban"){
+                eb.setColor(Color.RED);
+                eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.");
+                channel.sendMessage(eb.build()).queue();
+                eb.clear();
+                return;
+            }
+
+            eb.setColor(Color.GREEN);
+            eb.setTitle("**Successfully Banned**", null);
+            eb.setDescription(date);
+            eb.addField()
         }
     }
 
