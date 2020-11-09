@@ -49,14 +49,6 @@ buildscript {
     }
 }
 
-jar {
-    from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-}
-
 dependencies {
     compile 'net.dv8tion:JDA:4.2.0_214'
 }
