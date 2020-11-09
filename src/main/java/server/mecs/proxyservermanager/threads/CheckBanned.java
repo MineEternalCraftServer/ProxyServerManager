@@ -40,5 +40,4 @@ public class CheckBanned extends Thread {
         checkBanned.start();
         return isBanned;
     }
-
 }
