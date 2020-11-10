@@ -34,7 +34,7 @@ public class PunishmentLog extends Thread{
         mysql.close();
     }
 
-    public void PunishmentLog(ProxyServerManager plugin, ProxiedPlayer executioner, String target_mcid, String target_uuid, String punish_type, String punish_reason, String punish_date){
+    public static void PunishmentLog(ProxyServerManager plugin, ProxiedPlayer executioner, String target_mcid, String target_uuid, String punish_type, String punish_reason, String punish_date){
         PunishmentLog punishmentLog = new PunishmentLog(plugin, executioner, target_mcid, target_uuid, punish_type, punish_reason, punish_date);
         punishmentLog.start();
     }

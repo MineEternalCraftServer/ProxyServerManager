@@ -130,39 +130,6 @@ public class Discord extends ListenerAdapter {
 
             eb.clear();
         }
-
-        if (emessage.indexOf("/ban") == 0){
-            boolean hasRole = false;
-            for (int i=0; i<guild.getMemberById(e.getAuthor().getId()).getRoles().size(); i++){
-                if("Admin".equals(guild.getMemberById(e.getAuthor().getId()).getRoles().get(i).getName())){
-                    hasRole = true;
-                }
-                if("Moderator".equals(guild.getMemberById(e.getAuthor().getId()).getRoles().get(i).getName())){
-                    hasRole = true;
-                }
-            }
-
-            if (!hasRole){
-                eb.setColor(Color.RED);
-                eb.setDescription("<@" + e.getAuthor().getId() + ">\nあなたには権限がありません。\nYou do not have permission to use this command.");
-                channel.sendMessage(eb.build()).queue();
-                eb.clear();
-                return;
-            }
-
-            if (e.getMessage().getContentRaw() == "/ban"){
-                eb.setColor(Color.RED);
-                eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.");
-                channel.sendMessage(eb.build()).queue();
-                eb.clear();
-                return;
-            }
-
-            eb.setColor(Color.GREEN);
-            eb.setTitle("**Successfully Banned**", null);
-            eb.setDescription(date);
-            eb.addField()
-        }
     }
 
     @Override public void onPrivateMessageReceived(PrivateMessageReceivedEvent e){
