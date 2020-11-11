@@ -22,7 +22,7 @@ public class BanCommand extends Command {
             return;
         }
 
-        if (args.length == 0){
+        if (!(args.length >= 2)){
             sender.sendMessage(new ComponentBuilder("").create());
             sender.sendMessage(new ComponentBuilder("§c/ban <player> <reason>").create());
             sender.sendMessage(new ComponentBuilder("").create());
@@ -34,13 +34,7 @@ public class BanCommand extends Command {
             return;
         }
 
-        if (args.length == 1){
 
-        }
-
-        else{
-
-        }
     }
 }
 
