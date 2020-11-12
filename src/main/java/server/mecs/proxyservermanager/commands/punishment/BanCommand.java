@@ -8,6 +8,7 @@ import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.threads.CheckBanned;
 import server.mecs.proxyservermanager.threads.PunishBan;
+import server.mecs.proxyservermanager.threads.PunishmentLog;
 
 public class BanCommand extends Command {
 
@@ -55,6 +56,12 @@ public class BanCommand extends Command {
 
             ProxyServer.getInstance().broadcast(new ComponentBuilder("§c§lA player has been removed from the server for hacking or abuse.\n" +
                     "§bThanks for reporting it!").create());
+
+            if (sender instanceof ProxiedPlayer){
+                PunishmentLog.PunishmentLog(plugin, (ProxiedPlayer)sender, args[0], );
+            }else{
+
+            }
         }else{
             sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
         }
