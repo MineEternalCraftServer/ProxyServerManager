@@ -31,8 +31,12 @@ public class CheckBanned extends Thread {
                     mysql.execute("UPDATE player_data SET isBanned=false WHERE mcid='" + mcid + "';");
                 }
             }
+
+            rs.close();
         } catch (SQLException e) {
         }
+
+        mysql.close();
     }
 
     public static boolean isBanned(ProxyServerManager plugin, String mcid){

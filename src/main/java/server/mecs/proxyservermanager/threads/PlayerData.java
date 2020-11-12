@@ -24,20 +24,17 @@ public class PlayerData extends Thread {
         try {
             if (rs.next()){
                 if (rs.getString("mcid") != player.getName()){
-                    mysql.execute("UPDATE player_data SET mci='" + player.getName() + "' WHERE uuid='" + player.getUniqueId() + "';");
+                    mysql.execute("UPDATE player_data SET mcid='" + player.getName() + "' WHERE uuid='" + player.getUniqueId() + "';");
                 }
             }
 
             mysql.execute("INSERT INTO player_data (mcid,uuid,discord_link,isBanned,isMuted,ban_reason,mute_reason) " +
                     "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','false','false','','');");
+
+            rs.close();
         } catch (SQLException e) {
         }
 
-        try {
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         mysql.close();
     }
 

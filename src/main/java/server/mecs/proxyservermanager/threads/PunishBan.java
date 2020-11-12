@@ -24,11 +24,20 @@ public class PunishBan extends Thread {
 
         try {
             if (rs.next()){
-
+                mysql.execute("UPDATE player_data SET ban_reason='true' WHERE mcid='" + mcid + "';");
             }
+
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        mysql.close();
+    }
+
+    public static void PunishBan(ProxyServerManager plugin, String mcid, String reason){
+        PunishBan punishBan = new PunishBan(plugin, mcid, reason);
+        punishBan.start();
     }
 
 }

@@ -31,8 +31,12 @@ public class CheckMuted extends Thread {
                     mysql.execute("UPDATE player_data SET isMuted=false WHERE mcid='" + mcid + "';");
                 }
             }
+
+            rs.close();
         } catch (SQLException e) {
         }
+
+        mysql.close();
     }
 
     public static boolean isMuted(ProxyServerManager plugin, String mcid){
