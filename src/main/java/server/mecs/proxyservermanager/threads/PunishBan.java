@@ -26,8 +26,6 @@ public class PunishBan extends Thread {
             if (rs.next()){
                 mysql.execute("UPDATE player_data SET ban_reason='true' WHERE mcid='" + mcid + "';");
             }
-
-            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

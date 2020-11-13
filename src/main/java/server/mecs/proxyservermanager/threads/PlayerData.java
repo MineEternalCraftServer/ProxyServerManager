@@ -30,8 +30,6 @@ public class PlayerData extends Thread {
 
             mysql.execute("INSERT INTO player_data (mcid,uuid,discord_link,isBanned,isMuted,ban_reason,mute_reason) " +
                     "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','false','false','','');");
-
-            rs.close();
         } catch (SQLException e) {
         }
 

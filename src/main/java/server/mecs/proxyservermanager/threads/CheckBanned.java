@@ -31,8 +31,6 @@ public class CheckBanned extends Thread {
                     mysql.execute("UPDATE player_data SET isBanned=false WHERE mcid='" + mcid + "';");
                 }
             }
-
-            rs.close();
         } catch (SQLException e) {
         }
 

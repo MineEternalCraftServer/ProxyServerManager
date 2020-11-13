@@ -59,12 +59,6 @@ public class CheckSynced extends Thread {
                 isSynced = false;
             } catch (SQLException e) {
             }
-
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
             mysql.close();
         }
     }

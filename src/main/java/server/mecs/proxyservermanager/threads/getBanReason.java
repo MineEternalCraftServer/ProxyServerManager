@@ -22,7 +22,6 @@ public class getBanReason extends Thread {
         ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
         try {
             reason = rs.getString("ban_reason");
-            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
