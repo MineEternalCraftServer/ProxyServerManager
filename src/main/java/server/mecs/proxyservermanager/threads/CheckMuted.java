@@ -34,9 +34,10 @@ public class CheckMuted extends Thread {
 
             rs.close();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            mysql.close();
         }
-
-        mysql.close();
     }
 
     public static boolean isMuted(ProxyServerManager plugin, String mcid){

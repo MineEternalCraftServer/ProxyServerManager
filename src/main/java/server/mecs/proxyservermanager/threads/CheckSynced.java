@@ -58,8 +58,10 @@ public class CheckSynced extends Thread {
                 }
                 isSynced = false;
             } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                mysql.close();
             }
-            mysql.close();
         }
     }
 

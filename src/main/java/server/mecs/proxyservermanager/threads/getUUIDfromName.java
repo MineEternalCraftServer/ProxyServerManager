@@ -27,6 +27,8 @@ public class getUUIDfromName extends Thread{
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            mysql.close();
         }
     }
 

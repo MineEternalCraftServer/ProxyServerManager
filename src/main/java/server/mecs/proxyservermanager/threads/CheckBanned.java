@@ -32,9 +32,10 @@ public class CheckBanned extends Thread {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            mysql.close();
         }
-
-        mysql.close();
     }
 
     public static boolean isBanned(ProxyServerManager plugin, String mcid){

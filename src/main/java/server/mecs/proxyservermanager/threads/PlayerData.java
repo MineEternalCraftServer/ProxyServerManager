@@ -31,9 +31,10 @@ public class PlayerData extends Thread {
             mysql.execute("INSERT INTO player_data (mcid,uuid,discord_link,isBanned,isMuted,ban_reason,mute_reason) " +
                     "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','false','false','','');");
         } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            mysql.close();
         }
-
-        mysql.close();
     }
 
     public static void PlayerData(ProxyServerManager plugin, ProxiedPlayer player){

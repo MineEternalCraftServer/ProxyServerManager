@@ -24,8 +24,9 @@ public class getBanReason extends Thread {
             reason = rs.getString("ban_reason");
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            mysql.close();
         }
-        mysql.close();
     }
 
     public static String getBanReason(ProxyServerManager plugin, String mcid){
