@@ -10,7 +10,7 @@ public class getUUIDfromName extends Thread{
 
     ProxyServerManager plugin = null;
     String mcid = null;
-    String result = null;
+    static String result = null;
 
     public getUUIDfromName(ProxyServerManager plugin, String mcid){
         this.plugin = plugin;
@@ -23,13 +23,19 @@ public class getUUIDfromName extends Thread{
 
         try{
             if (rs.next()){
-
+                result = rs.getString("uuid");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
             mysql.close();
         }
+    }
+
+    public static String getUUIDfromName(ProxyServerManager plugin, String mcid){
+        getUUIDfromName getUUIDfromName = new getUUIDfromName(plugin, mcid);
+        getUUIDfromName.start();
+        return result;
     }
 
 }

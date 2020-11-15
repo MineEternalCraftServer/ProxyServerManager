@@ -9,6 +9,8 @@ import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.threads.CheckBanned;
 import server.mecs.proxyservermanager.threads.PunishBan;
 import server.mecs.proxyservermanager.threads.PunishmentLog;
+import server.mecs.proxyservermanager.threads.getUUIDfromName;
+import server.mecs.proxyservermanager.utils.getDate;
 
 public class BanCommand extends Command {
 
@@ -57,10 +59,13 @@ public class BanCommand extends Command {
             ProxyServer.getInstance().broadcast(new ComponentBuilder("§c§lA player has been removed from the server for hacking or abuse.\n" +
                     "§bThanks for reporting it!").create());
 
-            if (sender instanceof ProxiedPlayer){
-                PunishmentLog.PunishmentLog(plugin, (ProxiedPlayer)sender, args[0], );
-            }else{
+            String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
+            String date = getDate.getDate();
 
+            if (sender instanceof ProxiedPlayer){
+                PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "BAN", reason, date);
+            }else{
+                PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "BAN", reason, date);
             }
         }else{
             sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
