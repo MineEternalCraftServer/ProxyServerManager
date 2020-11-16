@@ -42,6 +42,7 @@ public class KickCommand extends Command {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
         player.disconnect(new ComponentBuilder("§cYou have been kicked.\n§7Reason: §f" + reason).create());
 
+        sender.sendMessage(new ComponentBuilder("§aThat player has been successfully kicked.").create());
         plugin.getProxy().getPluginManager().dispatchCommand(sender, "staff " + args[0] + " &chas been kicked by " + sender.getName() + " &cfor " + reason);
 
         String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);

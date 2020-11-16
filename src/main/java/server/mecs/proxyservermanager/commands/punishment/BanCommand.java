@@ -35,8 +35,13 @@ public class BanCommand extends Command {
             return;
         }
 
+        if (args[0] == sender.getName()){
+            sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
+            return;
+        }
+
         if (CheckBanned.isBanned(plugin, args[0])){
-            sender.sendMessage(new ComponentBuilder("§cThe player has already been banned from this server.").create());
+            sender.sendMessage(new ComponentBuilder("§cThat player has already been banned from this server.").create());
             return;
         }
 
@@ -49,12 +54,14 @@ public class BanCommand extends Command {
         PunishBan.PunishBan(plugin, args[0], reason);
 
         if (CheckBanned.isBanned(plugin, args[0])){
+
+            if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
+                player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
+            }
+
             sender.sendMessage(new ComponentBuilder("§aThat player has been successfully banned.").create());
-
-            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
-            player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
-
-            plugin.getProxy().getPluginManager().dispatchCommand(sender, "staff " + args[0] + " &chas been banned by " + sender.getName() + " &cfor " + reason);
+            plugin.getProxy().getPluginManager().dispatchCommand(sender, "staff " + args[0] + " &chas been permanently banned by " + sender.getName() + " &cfor " + reason);
 
             ProxyServer.getInstance().broadcast(new ComponentBuilder("§c§lA player has been removed from the server for hacking or abuse.\n" +
                     "§bThanks for reporting it!").create());

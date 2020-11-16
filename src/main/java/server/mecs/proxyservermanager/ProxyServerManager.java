@@ -31,10 +31,10 @@ public final class ProxyServerManager extends Plugin {
     public void onEnable() {
         // Plugin startup logic
 
-        for ( String command : new String[]{"tell", "msg", "message", "m", "w", "t"}) {
+        for (String command : new String[]{"tell", "msg", "message", "m", "w", "t"}) {
             getProxy().getPluginManager().registerCommand(this, new TellCommand(this, command));
         }
-        for ( String command : new String[]{"reply", "r"}) {
+        for (String command : new String[]{"reply", "r"}) {
             getProxy().getPluginManager().registerCommand(this, new ReplyCommand(this, command));
         }
         for (String command : new String[]{"discord"}){
