@@ -46,8 +46,7 @@ public class ConfigFile {
 
     public Configuration getConfig(){
         try{
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
-            return config;
+            return (this.config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(this.file));
         }catch (IOException e){
             e.printStackTrace();
             return null;

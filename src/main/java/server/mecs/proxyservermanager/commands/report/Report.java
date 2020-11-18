@@ -32,7 +32,7 @@ public class Report extends Command {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
 
             StringBuilder str = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
+            for (int i = 0; i < args.length; i++) {
                 str.append(args[i] + " ");
             }
             String message = str.toString().trim();

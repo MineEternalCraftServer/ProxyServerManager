@@ -1,7 +1,6 @@
 package server.mecs.proxyservermanager;
 
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
 import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.commands.privatemessage.ReplyCommand;
 import server.mecs.proxyservermanager.commands.privatemessage.TellCommand;
@@ -29,7 +28,8 @@ public final class ProxyServerManager extends Plugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        loadConfig();
+
+        discord = new Discord(this);
 
         for (String command : new String[]{"tell", "msg", "message", "m", "w", "t"}) {
             getProxy().getPluginManager().registerCommand(this, new TellCommand(this, command));
@@ -73,20 +73,5 @@ public final class ProxyServerManager extends Plugin {
     public void onDisable() {
         // Plugin shutdown logic
         discord.shutdown();
-    }
-
-    void loadConfig() {
-        try {
-            Configuration config = new ConfigFile(this).getConfig();
-            discord.token = config.getString("Discord.Token");
-            discord.guildID = config.getLong("Discord.Guild");
-            discord.receivereportChannelID = config.getLong("Discord.ReportChannel");
-            discord.staffmessageChannelID = config.getLong("Discord.StaffChannel");
-
-            discord.plugin = this;
-            discord.setup();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 }

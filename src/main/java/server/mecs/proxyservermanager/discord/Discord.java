@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.config.Configuration;
+import server.mecs.proxyservermanager.ConfigFile;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.threads.AccountSync;
@@ -44,6 +46,17 @@ public class Discord extends ListenerAdapter {
     public Long botID = 749010040199053434L;
 
     String date = getDate.getDate();
+
+    public Discord(ProxyServerManager plugin){
+        Configuration config = new ConfigFile(plugin).getConfig();
+        token = config.getString("Discord.Token");
+        guildID = config.getLong("Discord.Guild");
+        receivereportChannelID = config.getLong("Discord.ReportChannel");
+        staffmessageChannelID = config.getLong("Discord.StaffChannel");
+
+        this.plugin = plugin;
+        setup();
+    }
 
     public void staffmessage(String message){
         eb.setTitle("**StaffMessage**", null);
