@@ -12,6 +12,10 @@ public class ChatListener implements Listener {
 
     ProxyServerManager plugin;
 
+    public ChatListener(ProxyServerManager plugin){
+        this.plugin = plugin;
+    }
+
     @EventHandler
     public void onChat(ChatEvent e){
         if (e.isCancelled() || e.isProxyCommand())return;

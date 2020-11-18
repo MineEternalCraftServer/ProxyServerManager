@@ -63,8 +63,8 @@ public final class ProxyServerManager extends Plugin {
         }
 
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
-        getProxy().getPluginManager().registerListener(this, new LogoutListener());
-        getProxy().getPluginManager().registerListener(this, new ChatListener());
+        getProxy().getPluginManager().registerListener(this, new LogoutListener(this));
+        getProxy().getPluginManager().registerListener(this, new ChatListener(this));
 
         history = new HashMap<>();
     }
