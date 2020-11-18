@@ -18,8 +18,8 @@ public class PlayerData{
                 if (rs.getString("mcid") != player.getName()){
                     mysql.execute("UPDATE player_data SET mcid='" + player.getName() + "' WHERE uuid='" + player.getUniqueId() + "';");
                 }
+                return;
             }
-
             mysql.execute("INSERT INTO player_data (mcid,uuid,discord_link,isBanned,isMuted,ban_reason,mute_reason) " +
                     "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','false','false','','');");
         } catch (SQLException e) {
