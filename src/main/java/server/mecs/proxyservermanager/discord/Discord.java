@@ -95,8 +95,8 @@ public class Discord extends ListenerAdapter {
             jda.awaitReady();
 
             guild = jda.getGuildById(guildID);
-            receivereportChannel = jda.getTextChannelById(receivereportChannelID);
-            staffmessageChannel = jda.getTextChannelById(staffmessageChannelID);
+            receivereportChannel = guild.getTextChannelById(receivereportChannelID);
+            staffmessageChannel = guild.getTextChannelById(staffmessageChannelID);
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
             plugin.getLogger().info(e.getLocalizedMessage());
