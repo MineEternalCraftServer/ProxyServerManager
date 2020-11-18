@@ -13,11 +13,11 @@ public class LogoutListener implements Listener {
     ProxyServerManager plugin;
 
     @EventHandler
-    public void onLogout(PlayerDisconnectEvent e){
+    public void onLogout(PlayerDisconnectEvent e) {
         plugin.NickMap.remove(e.getPlayer().getUniqueId());
         plugin.MuteMap.remove(e.getPlayer().getUniqueId());
 
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> LogoutLog.LogoutLog(plugin, e.getPlayer()));
+        LogoutLog.LogoutLog(plugin, e.getPlayer());
 
         ProxyServer.getInstance().broadcast(new ComponentBuilder(e.getPlayer().getDisplayName() + " §ehas left the network.").create());
     }

@@ -63,7 +63,7 @@ public class MuteCommand extends Command {
                 }
 
                 sender.sendMessage(new ComponentBuilder("§aThat player has been successfully muted.").create());
-                StaffMessage.sendStaffMessage(plugin, args[0] + " &chas been permanently muted by " + sender.getName() + " &cfor " + reason);
+                StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been permanently muted by " + sender.getName() + " §cfor " + reason);
 
                 String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
                 String date = getDate.getDate();

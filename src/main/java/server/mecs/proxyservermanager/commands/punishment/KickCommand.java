@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
+import server.mecs.proxyservermanager.commands.staffmessage.StaffMessage;
 import server.mecs.proxyservermanager.threads.PunishmentLog;
 import server.mecs.proxyservermanager.threads.getUUIDfromName;
 import server.mecs.proxyservermanager.utils.getDate;
@@ -44,7 +45,7 @@ public class KickCommand extends Command {
             player.disconnect(new ComponentBuilder("§cYou have been kicked.\n§7Reason: §f" + reason).create());
 
             sender.sendMessage(new ComponentBuilder("§aThat player has been successfully kicked.").create());
-            plugin.getProxy().getPluginManager().dispatchCommand(sender, "staff " + args[0] + " &chas been kicked by " + sender.getName() + " &cfor " + reason);
+            StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been kicked by " + sender.getName() + " §cfor " + reason);
 
             String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
             String date = getDate.getDate();

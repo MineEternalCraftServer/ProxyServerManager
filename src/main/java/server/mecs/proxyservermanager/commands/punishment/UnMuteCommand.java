@@ -52,11 +52,11 @@ public class UnMuteCommand extends Command {
             if (!(CheckMuted.isMuted(plugin, args[0]))) {
                 if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
                     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
-                    plugin.MuteMap.remove(player);
+                    plugin.MuteMap.remove(player.getUniqueId());
                 }
 
                 sender.sendMessage(new ComponentBuilder("§aThat player has been successfully unmuted.").create());
-                StaffMessage.sendStaffMessage(plugin, args[0] + " &chas been unmuted by " + sender.getName());
+                StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been unmuted by " + sender.getName());
 
                 String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
                 String date = getDate.getDate();

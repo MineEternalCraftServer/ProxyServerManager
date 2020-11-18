@@ -51,7 +51,7 @@ public class UnBanCommand extends Command {
 
             if (!(CheckBanned.isBanned(plugin, args[0]))) {
                 sender.sendMessage(new ComponentBuilder("§aThat player has been successfully unbanned.").create());
-                StaffMessage.sendStaffMessage(plugin, args[0] + " &chas been unbanned by " + sender.getName());
+                StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been unbanned by " + sender.getName());
 
                 String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
                 String date = getDate.getDate();

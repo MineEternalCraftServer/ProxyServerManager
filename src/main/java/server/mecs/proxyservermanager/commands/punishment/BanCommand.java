@@ -66,7 +66,7 @@ public class BanCommand extends Command {
             }
 
             sender.sendMessage(new ComponentBuilder("§aThat player has been successfully banned.").create());
-            StaffMessage.sendStaffMessage(plugin, args[0] + " &chas been permanently banned by " + sender.getName() + " &cfor " + reason);
+            StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been permanently banned by " + sender.getName() + " §cfor " + reason);
 
             ProxyServer.getInstance().broadcast(new ComponentBuilder("§c§lA player has been removed from the server for hacking or abuse.\n" +
                     "§bThanks for reporting it!").create());
