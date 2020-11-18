@@ -10,37 +10,25 @@ public class CheckBanned extends Thread {
 
     public ProxyServerManager plugin;
     public String mcid;
-    public static Boolean isBanned = false;
 
     public CheckBanned(ProxyServerManager plugin, String mcid) {
         this.plugin = plugin;
         this.mcid = mcid;
     }
 
-    public void run() {
+    public static boolean isBanned(ProxyServerManager plugin, String mcid){
         MySQLManager mysql = new MySQLManager(plugin, "CheckBanned");
-        ResultSet rs = mysql.query("SELECT * FROM punish_player_data WHERE mcid='" + mcid + "';");
+        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
 
         try {
             if (rs.next()) {
-                if (rs.getBoolean("isBanned")){
-                    isBanned = true;
-                }else if (!(rs.getBoolean("isBanned"))){
-                    isBanned = false;
-                }else{
-                    mysql.execute("UPDATE player_data SET isBanned=false WHERE mcid='" + mcid + "';");
-                }
+                return rs.getBoolean("isBanned");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
             mysql.close();
         }
-    }
-
-    public static boolean isBanned(ProxyServerManager plugin, String mcid){
-        CheckBanned checkBanned = new CheckBanned(plugin, mcid);
-        checkBanned.start();
-        return isBanned;
+        return false;
     }
 }

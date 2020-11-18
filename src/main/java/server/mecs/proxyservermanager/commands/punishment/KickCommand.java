@@ -21,37 +21,39 @@ public class KickCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (!(sender.hasPermission("server.punish"))){
-            sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
-            return;
-        }
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            if (!(sender.hasPermission("server.punish"))) {
+                sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
+                return;
+            }
 
-        if (!(args.length >= 2)){
-            sender.sendMessage(new ComponentBuilder("").create());
-            sender.sendMessage(new ComponentBuilder("§c/kick <player> <reason>").create());
-            sender.sendMessage(new ComponentBuilder("").create());
-            return;
-        }
+            if (!(args.length >= 2)) {
+                sender.sendMessage(new ComponentBuilder("").create());
+                sender.sendMessage(new ComponentBuilder("§c/kick <player> <reason>").create());
+                sender.sendMessage(new ComponentBuilder("").create());
+                return;
+            }
 
-        StringBuilder str = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            str.append(args[i] + " ");
-        }
-        String reason = str.toString().trim();
+            StringBuilder str = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                str.append(args[i] + " ");
+            }
+            String reason = str.toString().trim();
 
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
-        player.disconnect(new ComponentBuilder("§cYou have been kicked.\n§7Reason: §f" + reason).create());
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
+            player.disconnect(new ComponentBuilder("§cYou have been kicked.\n§7Reason: §f" + reason).create());
 
-        sender.sendMessage(new ComponentBuilder("§aThat player has been successfully kicked.").create());
-        plugin.getProxy().getPluginManager().dispatchCommand(sender, "staff " + args[0] + " &chas been kicked by " + sender.getName() + " &cfor " + reason);
+            sender.sendMessage(new ComponentBuilder("§aThat player has been successfully kicked.").create());
+            plugin.getProxy().getPluginManager().dispatchCommand(sender, "staff " + args[0] + " &chas been kicked by " + sender.getName() + " &cfor " + reason);
 
-        String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
-        String date = getDate.getDate();
+            String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
+            String date = getDate.getDate();
 
-        if (sender instanceof ProxiedPlayer){
-            PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "KICK", reason, date);
-        }else{
-            PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "KICK", reason, date);
-        }
+            if (sender instanceof ProxiedPlayer) {
+                PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "KICK", reason, date);
+            } else {
+                PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "KICK", reason, date);
+            }
+        });
     }
 }

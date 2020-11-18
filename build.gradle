@@ -1,6 +1,12 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply plugin: 'java'
+plugins{
+    id'java'
+    id'application'
+    id'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+mainClassName = 'server.mecs.proxyservermanager.ProxyServerManager'
 
 group = 'server.mecs'
 version = '1.0-SNAPSHOT'
@@ -10,6 +16,7 @@ targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
+    jcenter()
     maven {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
@@ -21,13 +28,12 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'io.github.waterfallmc:waterfall-api:1.15-SNAPSHOT'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    def jda_version = '4.2.0_209'
+    compile "net.dv8tion:JDA:$jda_version"
 }
 
 sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
     main.java.srcDirs += 'src/main/java'
 }
 
@@ -35,24 +41,4 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         filter ReplaceTokens, tokens: [version: version]
     }
-}
-
-buildscript {
-    ext{
-        kotlin_version = '1.4.10'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-dependencies {
-    compile 'net.dv8tion:JDA:4.2.0_214'
-}
-
-repositories {
-    jcenter()
 }

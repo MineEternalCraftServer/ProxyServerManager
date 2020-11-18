@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.md_5.bungee.api.ProxyServer;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.threads.AccountSync;
@@ -29,20 +30,20 @@ public class Discord extends ListenerAdapter {
 
     public String token = null;
 
+    public Long guildID = 0L;
     public Guild guild = null;
-    public Long guildID = null;
 
-    public Long receivereportChannelID = null;
+    public Long receivereportChannelID = 0L;
     public TextChannel receivereportChannel = null;
 
-    public Long staffmessageChannelID = null;
+    public Long staffmessageChannelID = 0L;
     public TextChannel staffmessageChannel = null;
 
     public EmbedBuilder eb;
 
     public Long botID = 749010040199053434L;
 
-    String date = new getDate().getDate();
+    String date = getDate.getDate();
 
     public void staffmessage(String message){
         eb.setTitle("**StaffMessage**", null);
@@ -76,14 +77,13 @@ public class Discord extends ListenerAdapter {
         }
 
         try {
-            jda = JDABuilder
-                    .createDefault(token)
-                    .addEventListeners(this)
-                    .build();
+
+            jda = JDABuilder.createDefault(token).addEventListeners(this).setActivity(Activity.playing("MECS")).build();
             jda.awaitReady();
 
             guild = jda.getGuildById(guildID);
-            receivereportChannel = guild.getTextChannelById(guildID);
+            receivereportChannel = jda.getTextChannelById(receivereportChannelID);
+            staffmessageChannel = jda.getTextChannelById(staffmessageChannelID);
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
             plugin.getLogger().info(e.getLocalizedMessage());
@@ -96,40 +96,42 @@ public class Discord extends ListenerAdapter {
     }
 
     @Override public void onMessageReceived(MessageReceivedEvent e){
-        if (e.getAuthor().getId() == jda.getSelfUser().getId()){
-            return;
-        }
-        if (e.getChannelType() != ChannelType.TEXT){
-            return;
-        }
-
-        String emessage = e.getMessage().getContentDisplay();
-        String message = e.getMessage().getContentDisplay().replace("/report", "");
-        MessageChannel channel = e.getChannel();
-
-        if (emessage.indexOf("/report") == 0) {
-            if (e.getMessage().getContentRaw() == "/report") {
-                eb.setColor(Color.RED);
-                eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.\n/report <requirement>");
-                channel.sendMessage(eb.build()).queue();
-                eb.clear();
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            if (e.getAuthor().getId() == jda.getSelfUser().getId()) {
+                return;
+            }
+            if (e.getChannelType() != ChannelType.TEXT) {
                 return;
             }
 
-            eb.setColor(Color.GREEN);
-            eb.setDescription("<@" + e.getAuthor().getId() + ">レポートを送信しました。\nThe report was sent.");
-            channel.sendMessage(eb.build()).queue();
-            eb.clear();
+            String emessage = e.getMessage().getContentDisplay();
+            String message = e.getMessage().getContentDisplay().replace("/report", "");
+            MessageChannel channel = e.getChannel();
 
-            eb.setTitle("**DiscordReport**", null);
-            eb.setColor(Color.GREEN);
-            eb.setDescription(date);
-            eb.addField("**[Description]**", "**[Sender]** <@" + e.getAuthor().getId() + ">\n \n`" + message + "`", false);
+            if (emessage.indexOf("/report") == 0) {
+                if (e.getMessage().getContentRaw() == "/report") {
+                    eb.setColor(Color.RED);
+                    eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.\n/report <requirement>");
+                    channel.sendMessage(eb.build()).queue();
+                    eb.clear();
+                    return;
+                }
 
-            receivereport(eb.build());
+                eb.setColor(Color.GREEN);
+                eb.setDescription("<@" + e.getAuthor().getId() + ">レポートを送信しました。\nThe report was sent.");
+                channel.sendMessage(eb.build()).queue();
+                eb.clear();
 
-            eb.clear();
-        }
+                eb.setTitle("**DiscordReport**", null);
+                eb.setColor(Color.GREEN);
+                eb.setDescription(date);
+                eb.addField("**[Description]**", "**[Sender]** <@" + e.getAuthor().getId() + ">\n \n`" + message + "`", false);
+
+                receivereport(eb.build());
+
+                eb.clear();
+            }
+        });
     }
 
     @Override public void onPrivateMessageReceived(PrivateMessageReceivedEvent e){
@@ -145,44 +147,50 @@ public class Discord extends ListenerAdapter {
         Long id =  e.getMessage().getAuthor().getIdLong();
         Integer ID = Integer.parseInt(e.getMessage().getContentDisplay());
 
-        if (!(McToDiscord.number.containsValue(ID))){
+        if (!(McToDiscord.number.containsValue(ID))) {
             e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
             return;
         }
 
-        try{
-            if (CheckSynced.isSynced(plugin, player)){
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            try {
+                if (CheckSynced.isSynced(plugin, player, null)) {
+                    e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
+                    return;
+                }
+            } catch (NullPointerException ex) {
+                e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
+                return;
+            }
+
+            if (CheckSynced.isSynced(plugin, null,  e.getMessage().getAuthor().getIdLong())) {
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
                 return;
             }
-        }catch (NullPointerException ex){
-            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
-            return;
-        }
 
-        if (CheckSynced.isSynced(plugin, e.getMessage().getAuthor().getIdLong())){
-            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
-            return;
-        }
-
-        try{
-            AccountSync.AccountSync(plugin, player, id);
-            guild.addRoleToMember(id, guild.getRoleById(753582521685377034L));
-            guild.modifyNickname(guild.getMemberById(id), player);
-            e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
-        }catch (Exception ex){
-            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
-        }
+            try {
+                AccountSync.AccountSync(plugin, player, id);
+                guild.addRoleToMember(id, guild.getRoleById(753582521685377034L));
+                guild.modifyNickname(guild.getMemberById(id), player);
+                e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
+            } catch (Exception ex) {
+                e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
+            }
+        });
     }
 
     @Override public void onGuildMemberJoin(GuildMemberJoinEvent e){
-        guild.modifyNickname(e.getMember(), "An_Unlinked_Player").queue();
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            guild.modifyNickname(e.getMember(), "An_Unlinked_Player").queue();
+        });
     }
 
     @Override public void onGuildMemberRemove(GuildMemberRemoveEvent e){
-        if (CheckSynced.isSynced(plugin, e.getMember().getIdLong())){
-            AccountUnSync.AccountUnSync(plugin, e.getMember().getIdLong());
-        }
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            if (CheckSynced.isSynced(plugin, null, e.getMember().getIdLong())) {
+                AccountUnSync.AccountUnSync(plugin, null, e.getMember().getIdLong());
+            }
+        });
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {

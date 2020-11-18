@@ -37,7 +37,7 @@ public class MySQLManager {
         HOST = config.getString("mysql.host");
         USER = config.getString("mysql.user");
         PASS = config.getString("mysql.pass");
-        PORT = "3306";
+        PORT = config.getString("mysql.port");
         DB = config.getString("mysql.db");
         plugin.getLogger().info("Config loaded");
     }

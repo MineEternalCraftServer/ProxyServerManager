@@ -6,33 +6,19 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class getBanReason extends Thread {
+public class getBanReason {
 
-    ProxyServerManager plugin = null;
-    String mcid = null;
-    public static String reason = null;
-
-    public getBanReason(ProxyServerManager plugin, String mcid){
-        this.plugin = plugin;
-        this.mcid = mcid;
-    }
-
-    public void run(){
+    public static String getBanReason(ProxyServerManager plugin, String mcid){
         MySQLManager mysql = new MySQLManager(plugin, "getBanReason");
         ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
         try {
-            reason = rs.getString("ban_reason");
+            return rs.getString("ban_reason");
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
             mysql.close();
         }
-    }
-
-    public static String getBanReason(ProxyServerManager plugin, String mcid){
-        getBanReason getBanReason = new getBanReason(plugin, mcid);
-        getBanReason.start();
-        return reason;
+        return null;
     }
 
 }

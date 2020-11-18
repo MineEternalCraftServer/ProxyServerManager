@@ -7,17 +7,9 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PlayerData extends Thread {
+public class PlayerData{
 
-    ProxyServerManager plugin = null;
-    ProxiedPlayer player = null;
-
-    public PlayerData(ProxyServerManager plugin, ProxiedPlayer player){
-        this.plugin = plugin;
-        this.player = player;
-    }
-
-    public void run(){
+    public static void PlayerData(ProxyServerManager plugin, ProxiedPlayer player){
         MySQLManager mysql = new MySQLManager(plugin, "PlayerData");
         ResultSet rs = mysql.query("SELECT * FROM player_data WHERE uuid='" + player.getUniqueId() + "';");
 
@@ -35,10 +27,5 @@ public class PlayerData extends Thread {
         }finally {
             mysql.close();
         }
-    }
-
-    public static void PlayerData(ProxyServerManager plugin, ProxiedPlayer player){
-        PlayerData playerData = new PlayerData(plugin, player);
-        playerData.start();
     }
 }

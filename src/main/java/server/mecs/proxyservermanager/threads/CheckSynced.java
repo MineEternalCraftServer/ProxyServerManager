@@ -6,24 +6,9 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CheckSynced extends Thread {
+public class CheckSynced {
 
-    public ProxyServerManager plugin;
-    public String mcid = null;
-    public Long id = null;
-    public static Boolean isSynced = false;
-
-    public CheckSynced(ProxyServerManager plugin, String mcid){
-        this.plugin = plugin;
-        this.mcid = mcid;
-    }
-
-    public CheckSynced(ProxyServerManager plugin, Long id){
-        this.plugin = plugin;
-        this.id = id;
-    }
-
-    public void run(){
+    public static boolean isSynced(ProxyServerManager plugin, String mcid, Long id){
         MySQLManager mysql = new MySQLManager(plugin, "CheckSynced");
 
         if (mcid != null){
@@ -31,49 +16,26 @@ public class CheckSynced extends Thread {
 
             try {
                 if (rs.next()){
-                    if (rs.getString("discord_link") != "An_Unlinked_Player"){
-                        isSynced = true;
-                        return;
-                    }
-                    isSynced = false;
+                    return rs.getString("discord_link") != "An_Unlinked_Player";
                 }
-            } catch (SQLException e) {
-            }
-
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            mysql.close();
-        }
-
-        if (id != null){
-            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE discord_link='" + id + "';");
-
-            try {
-                if (rs.next()){
-                    isSynced = true;
-                    return;
-                }
-                isSynced = false;
             } catch (SQLException e) {
                 e.printStackTrace();
             }finally {
                 mysql.close();
             }
         }
-    }
 
-    public static boolean isSynced(ProxyServerManager plugin, String mcid){
-        CheckSynced checkSynced = new CheckSynced(plugin, mcid);
-        checkSynced.start();
-        return isSynced;
-    }
+        if (id != null){
+            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE discord_link='" + id + "';");
 
-    public static boolean isSynced(ProxyServerManager plugin, Long id){
-        CheckSynced checkSynced = new CheckSynced(plugin, id);
-        checkSynced.start();
-        return isSynced;
+            try {
+                return rs.next();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                mysql.close();
+            }
+        }
+        return false;
     }
 }

@@ -12,7 +12,6 @@ import server.mecs.proxyservermanager.discord.Discord;
 import server.mecs.proxyservermanager.listeners.ChatListener;
 import server.mecs.proxyservermanager.listeners.LoginListener;
 import server.mecs.proxyservermanager.listeners.LogoutListener;
-import server.mecs.proxyservermanager.listeners.MoveListener;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,6 +29,7 @@ public final class ProxyServerManager extends Plugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        loadConfig();
 
         for (String command : new String[]{"tell", "msg", "message", "m", "w", "t"}) {
             getProxy().getPluginManager().registerCommand(this, new TellCommand(this, command));
@@ -37,58 +37,56 @@ public final class ProxyServerManager extends Plugin {
         for (String command : new String[]{"reply", "r"}) {
             getProxy().getPluginManager().registerCommand(this, new ReplyCommand(this, command));
         }
-        for (String command : new String[]{"discord"}){
+        for (String command : new String[]{"discord"}) {
             getProxy().getPluginManager().registerCommand(this, new McToDiscord(this, command));
         }
-        for (String command : new String[]{"staff"}){
+        for (String command : new String[]{"staff"}) {
             getProxy().getPluginManager().registerCommand(this, new StaffMessage(this, command));
         }
-        for (String command : new String[]{"report"}){
+        for (String command : new String[]{"report"}) {
             getProxy().getPluginManager().registerCommand(this, new Report(this, command));
         }
-        for (String command : new String[]{"ban"}){
+        for (String command : new String[]{"ban"}) {
             getProxy().getPluginManager().registerCommand(this, new BanCommand(this, command));
         }
-        for (String command : new String[]{"mute"}){
+        for (String command : new String[]{"mute"}) {
             getProxy().getPluginManager().registerCommand(this, new MuteCommand(this, command));
         }
-        for (String command : new String[]{"kick"}){
+        for (String command : new String[]{"kick"}) {
             getProxy().getPluginManager().registerCommand(this, new KickCommand(this, command));
         }
-        for (String command : new String[]{"unban"}){
+        for (String command : new String[]{"unban"}) {
             getProxy().getPluginManager().registerCommand(this, new UnBanCommand(this, command));
         }
-        for (String command : new String[]{"unmute"}){
+        for (String command : new String[]{"unmute"}) {
             getProxy().getPluginManager().registerCommand(this, new UnMuteCommand(this, command));
         }
 
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerListener(this, new LogoutListener());
-        getProxy().getPluginManager().registerListener(this, new MoveListener());
         getProxy().getPluginManager().registerListener(this, new ChatListener());
 
         history = new HashMap<>();
-        loadConfig();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        discord.shutdown();
     }
 
-    void loadConfig(){
-        Configuration config = new ConfigFile(this).getConfig();
-        try{
-            discord.token = config.getString("discord.token");
-            discord.guildID = config.getLong("discord.guild");
-            discord.receivereportChannelID = config.getLong("discord.receivereportchannel");
-            discord.staffmessageChannelID = config.getLong("discord.staffmessagechannel");
+    void loadConfig() {
+        try {
+            Configuration config = new ConfigFile(this).getConfig();
+            discord.token = config.getString("Discord.Token");
+            discord.guildID = config.getLong("Discord.Guild");
+            discord.receivereportChannelID = config.getLong("Discord.ReportChannel");
+            discord.staffmessageChannelID = config.getLong("Discord.StaffChannel");
 
             discord.plugin = this;
             discord.setup();
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            getLogger().info(e.getLocalizedMessage());
         }
     }
 }

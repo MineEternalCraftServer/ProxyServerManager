@@ -10,39 +10,26 @@ public class CheckMuted extends Thread {
 
     public ProxyServerManager plugin;
     public String mcid;
-    public static Boolean isMuted = false;
 
     public CheckMuted(ProxyServerManager plugin, String mcid) {
         this.plugin = plugin;
         this.mcid = mcid;
     }
 
-    public void run() {
+    public static boolean isMuted(ProxyServerManager plugin, String mcid){
         MySQLManager mysql = new MySQLManager(plugin, "CheckBanned");
-        ResultSet rs = mysql.query("SELECT * FROM punish_player_data WHERE mcid='" + mcid + "';");
+        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
 
         try {
             if (rs.next()) {
-                if (rs.getBoolean("isMuted")){
-                    isMuted = true;
-                }else if (!(rs.getBoolean("isMuted"))){
-                    isMuted = false;
-                }else{
-                    mysql.execute("UPDATE player_data SET isMuted=false WHERE mcid='" + mcid + "';");
-                }
+                return rs.getBoolean("isMuted");
             }
-
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
             mysql.close();
         }
-    }
-
-    public static boolean isMuted(ProxyServerManager plugin, String mcid){
-        CheckMuted checkMuted = new CheckMuted(plugin, mcid);
-        checkMuted.start();
-        return isMuted;
+        return false;
     }
 }

@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
+import server.mecs.proxyservermanager.commands.staffmessage.StaffMessage;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -14,41 +15,46 @@ public class Report extends Command {
 
     public ProxyServerManager plugin;
 
-    public Report(ProxyServerManager plugin, String name){
+    public Report(ProxyServerManager plugin, String name) {
         super(name);
         this.plugin = plugin;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 0){
+        if (args.length == 0) {
             sender.sendMessage(new ComponentBuilder("").create());
             sender.sendMessage(new ComponentBuilder("§c/report <requirement>").create());
             sender.sendMessage(new ComponentBuilder("").create());
             return;
         }
 
-        StringBuilder str = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            str.append(args[i] + " ");
-        }
-        String message = str.toString().trim();
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
 
-        Date now = null;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            StringBuilder str = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                str.append(args[i] + " ");
+            }
+            String message = str.toString().trim();
 
-        plugin.discord.eb.setTitle("**ServerReport**", null);
-        plugin.discord.eb.setColor(new Color(0, 255, 255));
-        plugin.discord.eb.setDescription(format.format(now));
-        plugin.discord.eb.addField("**[Description]**", "**[Sender]** `" + sender + "`\n \n`" + message + "`", false);
+            StaffMessage.sendStaffMessage(plugin, message);
 
-        plugin.discord.receivereport(plugin.discord.eb.build());
+            Date now = null;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        plugin.discord.eb.clear();
+            plugin.discord.eb.setTitle("**ServerReport**", null);
+            plugin.discord.eb.setColor(new Color(0, 255, 255));
+            plugin.discord.eb.setDescription(format.format(now));
+            plugin.discord.eb.addField("**[Description]**", "**[Sender]** `" + sender + "`\n \n`" + message + "`", false);
 
-        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "staff " + message);
+            plugin.discord.receivereport(plugin.discord.eb.build());
 
-        sender.sendMessage(new ComponentBuilder("§aレポートを送信しました。\n§aあなたのレポートを受け取り早急に対応したします。" +
-                "\n§aThe report was sent.\n§aWe will take your report and respond to it as soon as possible.").create());
+            plugin.discord.eb.clear();
+
+            ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "staff " + message);
+
+            sender.sendMessage(new ComponentBuilder("§aレポートを送信しました。\n§aあなたのレポートを受け取り早急に対応したします。" +
+                    "\n§aThe report was sent.\n§aWe will take your report and respond to it as soon as possible.").create());
+        });
     }
 }

@@ -12,12 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ConfigFile {
-    private Plugin plugin = new ProxyServerManager();
+    private Plugin plugin = null;
     private File file;
     private Configuration config;
     private String filePatch = "config.yml";
 
     public ConfigFile(Plugin plugin){
+        this.plugin = plugin;
         if (!plugin.getDataFolder().exists())plugin.getDataFolder().mkdir();
         file = new File(plugin.getDataFolder(), filePatch);
 
@@ -37,6 +38,10 @@ public class ConfigFile {
                 plugin.getLogger().warning("failed to create config.yml");
             }
         }
+    }
+
+    private InputStream getResourceAsStream(String patch){
+        return plugin.getResourceAsStream(patch);
     }
 
     public Configuration getConfig(){

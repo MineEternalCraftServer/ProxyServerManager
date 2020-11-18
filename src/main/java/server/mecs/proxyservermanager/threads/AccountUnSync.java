@@ -3,23 +3,9 @@ package server.mecs.proxyservermanager.threads;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.database.MySQLManager;
 
-public class AccountUnSync extends Thread {
+public class AccountUnSync {
 
-    ProxyServerManager plugin = null;
-    String player = null;
-    Long id = null;
-
-    public AccountUnSync(ProxyServerManager plugin, Long id){
-        this.plugin = plugin;
-        this.id = id;
-    }
-
-    public AccountUnSync(ProxyServerManager plugin, String player){
-        this.plugin = plugin;
-        this.player = player;
-    }
-
-    public void run(){
+    public static void AccountUnSync(ProxyServerManager plugin, String player, Long id){
         MySQLManager mysql = new MySQLManager(plugin, "AccountUnSync");
 
         if (player != null){
@@ -31,15 +17,4 @@ public class AccountUnSync extends Thread {
         }
         mysql.close();
     }
-
-    public static void AccountUnSync(ProxyServerManager plugin, String player){
-        AccountUnSync accountUnSync = new AccountUnSync(plugin, player);
-        accountUnSync.start();
-    }
-
-    public static void AccountUnSync(ProxyServerManager plugin, Long id){
-        AccountUnSync accountUnSync = new AccountUnSync(plugin, id);
-        accountUnSync.start();
-    }
-
 }
