@@ -55,12 +55,6 @@ public class MuteCommand extends Command {
 
             PunishMute.PunishMute(plugin, args[0], reason);
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             if (CheckMuted.isMuted(plugin, args[0])) {
 
                 if (ProxyServer.getInstance().getPlayer(args[0]) != null) {

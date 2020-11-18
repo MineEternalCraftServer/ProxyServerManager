@@ -49,12 +49,6 @@ public class UnMuteCommand extends Command {
 
             PunishUnMute.PunishUnMute(plugin, args[0]);
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             if (!(CheckMuted.isMuted(plugin, args[0]))) {
                 if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
                     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);

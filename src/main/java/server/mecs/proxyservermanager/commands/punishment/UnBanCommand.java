@@ -49,12 +49,6 @@ public class UnBanCommand extends Command {
 
             PunishUnBan.PunishUnBan(plugin, args[0]);
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             if (!(CheckBanned.isBanned(plugin, args[0]))) {
                 sender.sendMessage(new ComponentBuilder("§aThat player has been successfully unbanned.").create());
                 StaffMessage.sendStaffMessage(plugin, args[0] + " &chas been unbanned by " + sender.getName());

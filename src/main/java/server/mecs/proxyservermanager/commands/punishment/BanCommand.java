@@ -55,12 +55,6 @@ public class BanCommand extends Command {
 
             PunishBan.PunishBan(plugin, args[0], reason);
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             if (!(CheckBanned.isBanned(plugin, args[0]))) {
                 sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
                 return;
