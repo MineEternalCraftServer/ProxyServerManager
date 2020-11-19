@@ -41,7 +41,7 @@ public class Discord extends ListenerAdapter {
     public Long staffmessageChannelID = 0L;
     public TextChannel staffmessageChannel = null;
 
-    public EmbedBuilder eb;
+    public EmbedBuilder eb = new EmbedBuilder();
 
     public Long botID = 749010040199053434L;
 
@@ -109,7 +109,6 @@ public class Discord extends ListenerAdapter {
     }
 
     @Override public void onMessageReceived(MessageReceivedEvent e){
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             if (e.getAuthor().getId() == jda.getSelfUser().getId()) {
                 return;
             }
@@ -122,33 +121,30 @@ public class Discord extends ListenerAdapter {
             MessageChannel channel = e.getChannel();
 
             if (emessage.indexOf("/report") == 0) {
-                if (e.getMessage().getContentRaw() == "/report") {
-                    eb.setColor(Color.RED);
+                if (emessage == "/report" || emessage == "/report ") {
+                    eb.setColor(new Color(255, 0, 0));
                     eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.\n/report <requirement>");
                     channel.sendMessage(eb.build()).queue();
                     eb.clear();
                     return;
                 }
 
-                eb.setColor(Color.GREEN);
+                eb.setColor(new Color(0, 255, 0));
                 eb.setDescription("<@" + e.getAuthor().getId() + ">レポートを送信しました。\nThe report was sent.");
                 channel.sendMessage(eb.build()).queue();
                 eb.clear();
 
                 eb.setTitle("**DiscordReport**", null);
-                eb.setColor(Color.GREEN);
+                eb.setColor(new Color(0, 255, 0));
                 eb.setDescription(date);
                 eb.addField("**[Description]**", "**[Sender]** <@" + e.getAuthor().getId() + ">\n \n`" + message + "`", false);
-
                 receivereport(eb.build());
-
                 eb.clear();
             }
-        });
     }
 
     @Override public void onPrivateMessageReceived(PrivateMessageReceivedEvent e){
-        if (e.getMessage().getAuthor().getIdLong() == botID)return;
+        if (e.getMessage().getAuthor() == jda.getSelfUser())return;
         try {
             Integer.parseInt(e.getMessage().getContentDisplay());
         }catch (NumberFormatException ex){
@@ -165,7 +161,6 @@ public class Discord extends ListenerAdapter {
             return;
         }
 
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 if (CheckSynced.isSynced(plugin, player, null)) {
                     e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
@@ -182,28 +177,23 @@ public class Discord extends ListenerAdapter {
             }
 
             try {
-                AccountSync.AccountSync(plugin, player, id);
+                ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> AccountSync.AccountSync(plugin, player, id));
                 guild.addRoleToMember(id, guild.getRoleById(753582521685377034L));
                 guild.modifyNickname(guild.getMemberById(id), player);
                 e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
             } catch (Exception ex) {
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
             }
-        });
     }
 
     @Override public void onGuildMemberJoin(GuildMemberJoinEvent e){
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             guild.modifyNickname(e.getMember(), "An_Unlinked_Player").queue();
-        });
     }
 
     @Override public void onGuildMemberRemove(GuildMemberRemoveEvent e){
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             if (CheckSynced.isSynced(plugin, null, e.getMember().getIdLong())) {
                 AccountUnSync.AccountUnSync(plugin, null, e.getMember().getIdLong());
             }
-        });
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {

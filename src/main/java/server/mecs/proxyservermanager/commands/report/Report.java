@@ -29,32 +29,29 @@ public class Report extends Command {
             return;
         }
 
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            str.append(args[i] + " ");
+        }
+        String message = str.toString().trim();
 
-            StringBuilder str = new StringBuilder();
-            for (int i = 0; i < args.length; i++) {
-                str.append(args[i] + " ");
-            }
-            String message = str.toString().trim();
+        StaffMessage.sendStaffMessage(plugin, message);
 
-            StaffMessage.sendStaffMessage(plugin, message);
+        Date now = null;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            Date now = null;
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        plugin.discord.eb.setTitle("**ServerReport**", null);
+        plugin.discord.eb.setColor(new Color(0, 255, 255));
+        plugin.discord.eb.setDescription(format.format(now));
+        plugin.discord.eb.addField("**[Description]**", "**[Sender]** `" + sender + "`\n \n`" + message + "`", false);
 
-            plugin.discord.eb.setTitle("**ServerReport**", null);
-            plugin.discord.eb.setColor(new Color(0, 255, 255));
-            plugin.discord.eb.setDescription(format.format(now));
-            plugin.discord.eb.addField("**[Description]**", "**[Sender]** `" + sender + "`\n \n`" + message + "`", false);
+        plugin.discord.receivereport(plugin.discord.eb.build());
 
-            plugin.discord.receivereport(plugin.discord.eb.build());
+        plugin.discord.eb.clear();
 
-            plugin.discord.eb.clear();
+        ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "staff " + message);
 
-            ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "staff " + message);
-
-            sender.sendMessage(new ComponentBuilder("§aレポートを送信しました。\n§aあなたのレポートを受け取り早急に対応したします。" +
-                    "\n§aThe report was sent.\n§aWe will take your report and respond to it as soon as possible.").create());
-        });
+        sender.sendMessage(new ComponentBuilder("§aレポートを送信しました。\n§aあなたのレポートを受け取り早急に対応したします。" +
+                "\n§aThe report was sent.\n§aWe will take your report and respond to it as soon as possible.").create());
     }
 }
