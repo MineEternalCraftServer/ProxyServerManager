@@ -43,8 +43,6 @@ public class Discord extends ListenerAdapter {
 
     public EmbedBuilder eb = new EmbedBuilder();
 
-    public Long botID = 749010040199053434L;
-
     String date = getDate.getDate();
 
     public Discord(ProxyServerManager plugin){
@@ -120,8 +118,8 @@ public class Discord extends ListenerAdapter {
             String message = e.getMessage().getContentDisplay().replace("/report", "");
             MessageChannel channel = e.getChannel();
 
-            if (emessage.indexOf("/report") == 0) {
-                if (emessage == "/report" || emessage == "/report ") {
+        if (emessage.indexOf("/report") == 0) {
+                if (emessage.length() <= 8) {
                     eb.setColor(new Color(255, 0, 0));
                     eb.setDescription("<@" + e.getAuthor().getId() + ">\n十分な記述がありません。\nThere is not enough description.\n/report <requirement>");
                     channel.sendMessage(eb.build()).queue();
