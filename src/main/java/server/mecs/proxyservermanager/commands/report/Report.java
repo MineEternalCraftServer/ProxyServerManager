@@ -37,14 +37,17 @@ public class Report extends Command {
 
         UUID uuid = ((ProxiedPlayer) sender).getUniqueId();
         if (CoolTime.containsKey(uuid)){
-            if (CoolTime.get(uuid) + 1000 * 30 >= System.currentTimeMillis()){
+            if (CoolTime.get(uuid) + 1000 * 30 <= System.currentTimeMillis()){
                 CoolTime.remove(uuid);
+            }else{
+                double timeleft = CoolTime.get(uuid) + 1000 * 30 - System.currentTimeMillis();
+                int timeleftformat = (int)Math.floor(timeleft / 1000);
+                sender.sendMessage(new ComponentBuilder("§cYour report cooldown has " + timeleftformat + "§c seconds left.").create());
+                return;
             }
-        }else{
-            Long timeleft = CoolTime.get(uuid) + 1000 * 30 / 1000 - System.currentTimeMillis() / 1000;
-            sender.sendMessage(new ComponentBuilder("§cYour report cooldown has " + timeleft + "§c seconds left.").create());
-            return;
         }
+
+        CoolTime.put(uuid, System.currentTimeMillis());
 
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < args.length; i++) {
@@ -67,7 +70,5 @@ public class Report extends Command {
 
         sender.sendMessage(new ComponentBuilder("§aレポートを送信しました。\n§aあなたのレポートを受け取り早急に対応したします。" +
                 "\n§aThe report was sent.\n§aWe will take your report and respond to it as soon as possible.").create());
-
-        CoolTime.put(uuid, System.currentTimeMillis());
     }
 }
