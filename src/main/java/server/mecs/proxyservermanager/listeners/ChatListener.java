@@ -8,9 +8,14 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import server.mecs.proxyservermanager.ProxyServerManager;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class ChatListener implements Listener {
 
     ProxyServerManager plugin;
+
+    public static HashMap<UUID, Long> CoolTime = new HashMap<>();
 
     public ChatListener(ProxyServerManager plugin){
         this.plugin = plugin;
@@ -18,11 +23,24 @@ public class ChatListener implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent e){
-        if (e.isCancelled() || e.isProxyCommand())return;
-
         Connection player = e.getSender();
 
         if (!(player instanceof ProxiedPlayer))return;
+
+        if (e.isCommand() || e.isProxyCommand()){
+            UUID uuid = ((ProxiedPlayer) player).getUniqueId();
+            if (CoolTime.containsKey(uuid)){
+                if (CoolTime.get(uuid) + 1000 * 5 >= System.currentTimeMillis()){
+                    CoolTime.remove(uuid);
+                }
+            }else{
+                Long timeleft = CoolTime.get(uuid) + 1000 * 5 / 1000 - System.currentTimeMillis() / 1000;
+                ((ProxiedPlayer) player).sendMessage(new ComponentBuilder("§cYour cooldown has " + timeleft + "§c seconds left.").create());
+                e.setCancelled(true);
+            }
+            CoolTime.put(uuid, System.currentTimeMillis());
+            return;
+        }
 
         if (plugin.MuteMap.containsKey(((ProxiedPlayer) player).getUniqueId())){
             ((ProxiedPlayer) player).sendMessage(new ComponentBuilder("§cYou have been muted.").create());

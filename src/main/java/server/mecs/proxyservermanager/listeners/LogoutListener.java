@@ -22,7 +22,6 @@ public class LogoutListener implements Listener {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             ProxiedPlayer player = e.getPlayer();
 
-            plugin.NickMap.remove(player.getUniqueId());
             plugin.MuteMap.remove(player.getUniqueId());
 
             LogoutLog.LogoutLog(plugin, player);

@@ -20,10 +20,6 @@ public final class ProxyServerManager extends Plugin {
     public static Discord discord;
     public static HashMap<String, String> history;
     public static HashMap<UUID, Boolean> MuteMap = new HashMap<>();
-    public static HashMap<UUID, String> NickMap = new HashMap<>();
-
-    public static Long currentTime = System.currentTimeMillis();
-    public static HashMap<UUID, Long> CoolTime = new HashMap<>();
 
     @Override
     public void onEnable() {

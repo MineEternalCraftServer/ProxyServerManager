@@ -2,16 +2,21 @@ package server.mecs.proxyservermanager.commands.report;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.commands.staffmessage.StaffMessage;
 import server.mecs.proxyservermanager.utils.getDate;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Report extends Command {
 
     public ProxyServerManager plugin;
+
+    public static HashMap<UUID, Long> CoolTime = new HashMap<>();
 
     public Report(ProxyServerManager plugin, String name) {
         super(name);
@@ -20,10 +25,24 @@ public class Report extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+
+        if (!(sender instanceof ProxiedPlayer))return;
+
         if (args.length == 0) {
             sender.sendMessage(new ComponentBuilder("").create());
             sender.sendMessage(new ComponentBuilder("§c/report <requirement>").create());
             sender.sendMessage(new ComponentBuilder("").create());
+            return;
+        }
+
+        UUID uuid = ((ProxiedPlayer) sender).getUniqueId();
+        if (CoolTime.containsKey(uuid)){
+            if (CoolTime.get(uuid) + 1000 * 30 >= System.currentTimeMillis()){
+                CoolTime.remove(uuid);
+            }
+        }else{
+            Long timeleft = CoolTime.get(uuid) + 1000 * 30 / 1000 - System.currentTimeMillis() / 1000;
+            sender.sendMessage(new ComponentBuilder("§cYour report cooldown has " + timeleft + "§c seconds left.").create());
             return;
         }
 
@@ -48,5 +67,7 @@ public class Report extends Command {
 
         sender.sendMessage(new ComponentBuilder("§aレポートを送信しました。\n§aあなたのレポートを受け取り早急に対応したします。" +
                 "\n§aThe report was sent.\n§aWe will take your report and respond to it as soon as possible.").create());
+
+        CoolTime.put(uuid, System.currentTimeMillis());
     }
 }
