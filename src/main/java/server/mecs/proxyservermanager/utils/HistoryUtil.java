@@ -1,16 +1,17 @@
 package server.mecs.proxyservermanager.utils;
 
-import server.mecs.proxyservermanager.ProxyServerManager;
+import java.util.HashMap;
 
 public class HistoryUtil {
 
-    ProxyServerManager plugin;
+
+    public static HashMap<String, String> history = new HashMap<>();
 
     public void putHistory(String reciever, String sender) {
-        plugin.history.put(reciever, sender);
+        history.put(reciever, sender);
     }
 
     public String getHistory(String reciever) {
-        return plugin.history.get(reciever);
+        return history.get(reciever);
     }
 }

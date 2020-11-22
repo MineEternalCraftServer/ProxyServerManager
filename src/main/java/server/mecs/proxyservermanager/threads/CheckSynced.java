@@ -16,7 +16,7 @@ public class CheckSynced {
 
             try {
                 if (rs.next()){
-                    return rs.getString("discord_link") != "An_Unlinked_Player";
+                    return !rs.getString("discord_link").equals("An_Unlinked_Player");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

@@ -18,7 +18,6 @@ import java.util.UUID;
 public final class ProxyServerManager extends Plugin {
 
     public static Discord discord;
-    public static HashMap<String, String> history;
     public static HashMap<UUID, Boolean> MuteMap = new HashMap<>();
 
     @Override
@@ -61,8 +60,6 @@ public final class ProxyServerManager extends Plugin {
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerListener(this, new LogoutListener(this));
         getProxy().getPluginManager().registerListener(this, new ChatListener(this));
-
-        history = new HashMap<>();
     }
 
     @Override

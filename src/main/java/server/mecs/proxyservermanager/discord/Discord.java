@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.md_5.bungee.api.ProxyServer;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.md_5.bungee.config.Configuration;
 import server.mecs.proxyservermanager.ConfigFile;
 import server.mecs.proxyservermanager.ProxyServerManager;
@@ -18,6 +18,7 @@ import server.mecs.proxyservermanager.commands.discord.McToDiscord;
 import server.mecs.proxyservermanager.threads.AccountSync;
 import server.mecs.proxyservermanager.threads.AccountUnSync;
 import server.mecs.proxyservermanager.threads.CheckSynced;
+import server.mecs.proxyservermanager.threads.getIDfromMCID;
 import server.mecs.proxyservermanager.utils.getDate;
 
 import javax.security.auth.login.LoginException;
@@ -25,7 +26,7 @@ import java.awt.*;
 import java.util.Map;
 import java.util.Objects;
 
-public class Discord extends ListenerAdapter {
+public class Discord extends ListenerAdapter  {
     public ProxyServerManager plugin = null;
 
     JDA jda;
@@ -89,7 +90,12 @@ public class Discord extends ListenerAdapter {
 
         try {
 
-            jda = JDABuilder.createDefault(token).addEventListeners(this).setActivity(Activity.playing("MECS")).build();
+            jda = JDABuilder
+                    .createDefault(token)
+                    .addEventListeners(this)
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                    .setActivity(Activity.playing("MECS"))
+                    .build();
             jda.awaitReady();
 
             guild = jda.getGuildById(guildID);
@@ -104,6 +110,15 @@ public class Discord extends ListenerAdapter {
 
     @Override public void onReady(ReadyEvent e){
         plugin.getLogger().info("discord bot ready");
+    }
+
+    @Override public void onGuildMemberJoin(GuildMemberJoinEvent e){
+        guild.modifyNickname(e.getMember(), "An_Unlinked_Player").queue();
+    }
+
+    @Override public void onGuildMemberRemove(GuildMemberRemoveEvent e){
+        onMemberRemove subclass = new onMemberRemove(e.getUser());
+        subclass.start();
     }
 
     @Override public void onMessageReceived(MessageReceivedEvent e){
@@ -151,7 +166,7 @@ public class Discord extends ListenerAdapter {
         }
 
         String player = getKeyByValue(McToDiscord.number, Integer.parseInt(e.getMessage().getContentDisplay()));
-        Long id =  e.getMessage().getAuthor().getIdLong();
+        long id =  e.getMessage().getAuthor().getIdLong();
         Integer ID = Integer.parseInt(e.getMessage().getContentDisplay());
 
         if (!(McToDiscord.number.containsValue(ID))) {
@@ -175,22 +190,13 @@ public class Discord extends ListenerAdapter {
             }
 
             try {
-                ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> AccountSync.AccountSync(plugin, player, id));
-                guild.addRoleToMember(id, guild.getRoleById(753582521685377034L));
-                guild.modifyNickname(guild.getMemberById(id), player);
+                AccountSync.AccountSync(plugin, player, id);
+                guild.addRoleToMember(id, guild.getRoleById(753582521685377034L)).queue();
+                guild.modifyNickname((Member) jda.retrieveUserById(id), player).queue();
                 e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
             } catch (Exception ex) {
+                ex.printStackTrace();
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
-            }
-    }
-
-    @Override public void onGuildMemberJoin(GuildMemberJoinEvent e){
-            guild.modifyNickname(e.getMember(), "An_Unlinked_Player").queue();
-    }
-
-    @Override public void onGuildMemberRemove(GuildMemberRemoveEvent e){
-            if (CheckSynced.isSynced(plugin, null, e.getMember().getIdLong())) {
-                AccountUnSync.AccountUnSync(plugin, null, e.getMember().getIdLong());
             }
     }
 
@@ -203,4 +209,21 @@ public class Discord extends ListenerAdapter {
         return null;
     }
 
+    public void removeRole(String mcid){
+        guild.removeRoleFromMember(getIDfromMCID.getIDfromMCID(plugin, mcid), guild.getRoleById(753582521685377034L)).queue();
+    }
+
+    class onMemberRemove extends Thread{
+        User user;
+        public onMemberRemove(User user){
+            this.user = user;
+        }
+
+        public void run(){
+            Long userID = user.getIdLong();
+            if (CheckSynced.isSynced(plugin, null, userID)){
+                AccountUnSync.AccountUnSync(plugin, null, userID);
+            }
+        }
+    }
 }

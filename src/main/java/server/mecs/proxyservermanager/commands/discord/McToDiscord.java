@@ -11,7 +11,6 @@ import server.mecs.proxyservermanager.threads.CheckSynced;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 public class McToDiscord extends Command {
@@ -20,22 +19,23 @@ public class McToDiscord extends Command {
 
     public static Map<String, Integer> number = new HashMap<>();
 
-    public McToDiscord(ProxyServerManager plugin, String name){
+    public McToDiscord(ProxyServerManager plugin, String name) {
         super(name);
         this.plugin = plugin;
     }
 
-    @Override public void execute(CommandSender sender, String[] args) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            if (args.length == 0) {
-                sender.sendMessage(new ComponentBuilder("§b↓↓↓Discord Invitation Link↓↓↓").create());
-                sender.sendMessage(new ComponentBuilder("§l==== https://discord.gg/FrSn838 ====").create());
-                sender.sendMessage(new ComponentBuilder("§cDiscordで発言するためにはアカウントを同期する必要があります！\n" +
-                        "§cYou will need to sync your account in order to speak on Discord!").create());
-                return;
-            }
-            if (args[0] == "sync") {
-                if (number.containsKey(sender)) {
+    @Override
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            sender.sendMessage(new ComponentBuilder("§b↓↓↓Discord Invitation Link↓↓↓").create());
+            sender.sendMessage(new ComponentBuilder("§l==== https://discord.gg/FrSn838 ====").create());
+            sender.sendMessage(new ComponentBuilder("§cDiscordで発言するためにはアカウントを同期する必要があります！\n" +
+                    "§cYou will need to sync your account in order to speak on Discord!").create());
+            return;
+        }
+        if (args[0].equals("sync")) {
+            ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+                if (number.containsKey(sender.getName())) {
                     sender.sendMessage(new ComponentBuilder("§cあなたはすでに連携を申請中です。\n§cしばらく待ってからもう一度試してください。\n" +
                             "§cYou are already in the process of requesting an account sync.\n§cPlease wait a while and try again.").create());
                     sender.sendMessage(new ComponentBuilder("§c/discord cancel").create());
@@ -48,33 +48,38 @@ public class McToDiscord extends Command {
                             "§cYou are currently Mute and therefore unable to sync your account.").create());
                     return;
                 }
-                if (!(CheckSynced.isSynced(plugin, sender.getName(), null))) {
+                if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
                     sender.sendMessage(new ComponentBuilder("§cあなたはすでにアカウントを同期しています。\n" +
                             "§cYou have already synced your account.").create());
-                    return;
                 }
-                number.put(sender.getName(), new Random().nextInt(9999 - 1000) + 1000);
-                sender.sendMessage(new ComponentBuilder("§aあなたの認証IDは §b" + number.get(sender) + "§a です。\n" +
+                int randomNumber = (int) (Math.random() * 9999);
+                if (randomNumber <= 1000) {
+                    randomNumber = randomNumber + 1000;
+                }
+                number.put(sender.getName(), randomNumber);
+                sender.sendMessage(new ComponentBuilder("§aあなたの認証IDは §b" + number.get(sender.getName()) + "§a です。\n" +
                         "§aこの認証IDをDiscordのMECS Bot#2386のDMに送信してください。\n" +
-                        "§aYour authentication ID is §b" + number.get(sender) + "\n" +
+                        "§aYour authentication ID is §b" + number.get(sender.getName()) + "\n" +
                         "§aPlease send this authentication ID to the direct message on MECS Bot#2386.").create());
-            }
+            });
+        }
 
-            if (args[0] == "unsync") {
-                if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
-                    AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
-                    sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
-                            "§aYour account has been unsynced.").create());
-                }
-                sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +
-                        "§cYou have not synced your account.").create());
+        if (args[0].equals("unsync")) {
+            if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
+                plugin.discord.removeRole(sender.getName());
+                ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> AccountUnSync.AccountUnSync(plugin, sender.getName(), null));
+                sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
+                        "§aYour account has been unsynced.").create());
+                return;
             }
+            sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +
+                    "§cYou have not synced your account.").create());
+        }
 
-            if (args[0] == "cancel") {
-                number.remove(sender);
-                sender.sendMessage(new ComponentBuilder("§aアカウント同期申請をキャンセルしました。\n" +
-                        "§aCancelled your synchronization request.").create());
-            }
-        });
+        if (args[0].equals("cancel")) {
+            number.remove(sender);
+            sender.sendMessage(new ComponentBuilder("§aアカウント同期申請をキャンセルしました。\n" +
+                    "§aCancelled your synchronization request.").create());
+        }
     }
 }

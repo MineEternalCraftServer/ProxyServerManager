@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     compileOnly 'io.github.waterfallmc:waterfall-api:1.15-SNAPSHOT'
-    def jda_version = '4.2.0_209'
+    def jda_version = '4.2.0_221'
     compile "net.dv8tion:JDA:$jda_version"
 }
 
