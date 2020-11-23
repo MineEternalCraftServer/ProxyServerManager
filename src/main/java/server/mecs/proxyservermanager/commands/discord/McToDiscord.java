@@ -8,6 +8,7 @@ import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.threads.AccountUnSync;
 import server.mecs.proxyservermanager.threads.CheckSynced;
+import server.mecs.proxyservermanager.threads.getIDfromMCID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +52,7 @@ public class McToDiscord extends Command {
                 if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
                     sender.sendMessage(new ComponentBuilder("§cあなたはすでにアカウントを同期しています。\n" +
                             "§cYou have already synced your account.").create());
+                    return;
                 }
                 int randomNumber = (int) (Math.random() * 9999);
                 if (randomNumber <= 1000) {
@@ -67,6 +69,7 @@ public class McToDiscord extends Command {
         if (args[0].equals("unsync")) {
             if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
                 plugin.discord.removeRole(sender.getName());
+                plugin.discord.guild.modifyNickname(plugin.discord.guild.getMemberById(getIDfromMCID.getIDfromMCID(plugin, sender.getName())), "An_Unlinked_Player").queue();
                 ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> AccountUnSync.AccountUnSync(plugin, sender.getName(), null));
                 sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
                         "§aYour account has been unsynced.").create());

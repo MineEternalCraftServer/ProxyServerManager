@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.md_5.bungee.config.Configuration;
 import server.mecs.proxyservermanager.ConfigFile;
 import server.mecs.proxyservermanager.ProxyServerManager;
@@ -93,6 +95,8 @@ public class Discord extends ListenerAdapter {
             jda = JDABuilder
                     .createDefault(token)
                     .addEventListeners(this)
+                    .setChunkingFilter(ChunkingFilter.ALL)
+                    .setMemberCachePolicy(MemberCachePolicy.ALL)
                     .enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .setActivity(Activity.playing("MECS"))
                     .build();
@@ -126,7 +130,7 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
-        if (e.getAuthor().getId() == jda.getSelfUser().getId()) {
+        if (e.getAuthor().getId().equals(jda.getSelfUser().getId())) {
             return;
         }
         if (e.getChannelType() != ChannelType.TEXT) {
@@ -172,7 +176,6 @@ public class Discord extends ListenerAdapter {
 
         String player = getKeyByValue(McToDiscord.number, Integer.parseInt(e.getMessage().getContentDisplay()));
         Long id = e.getMessage().getAuthor().getIdLong();
-        String name = e.getMessage().getAuthor().getName();
         Integer ID = Integer.parseInt(e.getMessage().getContentDisplay());
 
         if (!(McToDiscord.number.containsValue(ID))) {
@@ -199,6 +202,7 @@ public class Discord extends ListenerAdapter {
             AccountSync.AccountSync(plugin, player, id);
             guild.modifyNickname(guild.getMemberById(id), player).queue();
             guild.addRoleToMember(id, guild.getRoleById(753582521685377034L)).queue();
+            McToDiscord.number.remove(player);
             e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
         } catch (Exception ex) {
             ex.printStackTrace();
