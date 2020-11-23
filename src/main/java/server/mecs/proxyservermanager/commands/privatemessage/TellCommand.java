@@ -2,15 +2,12 @@ package server.mecs.proxyservermanager.commands.privatemessage;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.japanize.JapanizeType;
 import server.mecs.proxyservermanager.japanize.Japanizer;
-import server.mecs.proxyservermanager.utils.HistoryUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +17,8 @@ public class TellCommand extends Command {
     static public ArrayList<UUID> viewlist;
 
     public ProxyServerManager plugin;
-    public HistoryUtil util;
+    public static HashMap<String, String> history = new HashMap<>();
+
 
     public TellCommand(ProxyServerManager plugin, String name) {
         super(name);
@@ -93,22 +91,9 @@ public class TellCommand extends Command {
         sendMessage(sender, endmsg);
         sendMessage(reciever, endmsg);
         //履歴をput
-        util.putHistory(reciever.getName(), sender.getName());
+        putHistory(reciever.getName(), sender.getName());
         // コンソールに表示設定なら、コンソールに表示する
         plugin.getLogger().info(endmsg);
-        // 権限もちで、かつviewモードがon さらに送信者でも受け取り者でもなければ 個チャを表示
-        for (String server : ProxyServer.getInstance().getServers().keySet()) {
-            ServerInfo info = ProxyServer.getInstance().getServerInfo(server);
-            for (ProxiedPlayer players : info.getPlayers()) {
-                if (players.hasPermission("bd.op")) {
-                    if (viewlist.contains(players.getUniqueId())) {
-                        if (!players.getName().equals(sender.getName()) && !players.getName().equals(reciever.getName())) {
-                            players.sendMessage(TextComponent.fromLegacyText("§8[View]§r" + endmsg));
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
@@ -121,6 +106,14 @@ public class TellCommand extends Command {
     protected void sendMessage(CommandSender reciever, String message) {
         if (message == null) return;
         reciever.sendMessage(TextComponent.fromLegacyText(message));
+    }
+
+    public void putHistory(String reciever, String sender) {
+        history.put(reciever, sender);
+    }
+
+    public String getHistory(String reciever) {
+        return history.get(reciever);
     }
 
 }
