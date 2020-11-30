@@ -13,46 +13,43 @@ public class LogoutListener implements Listener {
 
     ProxyServerManager plugin = null;
 
-    public LogoutListener(ProxyServerManager plugin){
+    public LogoutListener(ProxyServerManager plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onLogout(PlayerDisconnectEvent e) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            ProxiedPlayer player = e.getPlayer();
+    public void onLogout(PlayerDisconnectEvent e) throws InterruptedException {
+        ProxiedPlayer player = e.getPlayer();
 
-            plugin.MuteMap.remove(player.getUniqueId());
+        plugin.MuteMap.remove(player.getUniqueId());
 
-            LogoutLog.LogoutLog(plugin, player);
+        LogoutLog.LogoutLog(plugin, player);
 
-            if (player.hasPermission("group.owner") || player.hasPermission("group.administrator")){
-                ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §c" + e.getPlayer().getName() + "§6 left the network.").create());
-                return;
-            }
+        if (player.hasPermission("group.owner") || player.hasPermission("group.administrator")) {
+            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §c" + e.getPlayer().getName() + "§6 left the network.").create());
+            return;
+        }
 
-            if (player.hasPermission("group.moderator")){
-                ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §2" + e.getPlayer().getName() + "§6 left the network.").create());
-                return;
-            }
+        if (player.hasPermission("group.moderator")) {
+            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §2" + e.getPlayer().getName() + "§6 left the network.").create());
+            return;
+        }
 
-            if (player.hasPermission("group.helper")){
-                ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §1" + e.getPlayer().getName() + "§6 left the network.").create());
-                return;
-            }
+        if (player.hasPermission("group.helper")) {
+            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §1" + e.getPlayer().getName() + "§6 left the network.").create());
+            return;
+        }
 
-            if (player.hasPermission("group.youtuber")){
-                ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §f" + e.getPlayer().getName() + "§6 left the network.").create());
-                return;
-            }
+        if (player.hasPermission("group.youtuber")) {
+            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §f" + e.getPlayer().getName() + "§6 left the network.").create());
+            return;
+        }
 
-            if (player.hasPermission("group.vip+++") || player.hasPermission("group.vip++") || player.hasPermission("group.vip+") || player.hasPermission("group.vip")){
-                ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §a" + e.getPlayer().getName() + "§6 left the network.").create());
-                return;
-            }
+        if (player.hasPermission("group.vip+++") || player.hasPermission("group.vip++") || player.hasPermission("group.vip+") || player.hasPermission("group.vip")) {
+            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §a" + e.getPlayer().getName() + "§6 left the network.").create());
+            return;
+        }
 
-            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §7" + e.getPlayer().getName() + "§6 left the network.").create());
-
-        });
+        ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §7" + e.getPlayer().getName() + "§6 left the network.").create());
     }
 }

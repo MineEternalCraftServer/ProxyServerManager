@@ -5,9 +5,17 @@ import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.database.MySQLManager;
 import server.mecs.proxyservermanager.utils.getDate;
 
-public class LogoutLog {
+public class LogoutLog extends Thread{
 
-    public static void LogoutLog(ProxyServerManager plugin, ProxiedPlayer player){
+    ProxyServerManager plugin;
+    ProxiedPlayer player;
+
+    public LogoutLog(ProxyServerManager plugin, ProxiedPlayer player){
+        this.plugin = plugin;
+        this.player = player;
+    }
+
+    public void run(){
         String address = player.getAddress().getHostString();
 
         if (address == null){
@@ -20,5 +28,11 @@ public class LogoutLog {
                 "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','" + address + "','" + getDate.getDate() + "');");
 
         mysql.close();
+    }
+
+    public static void LogoutLog(ProxyServerManager plugin, ProxiedPlayer player) throws InterruptedException {
+        LogoutLog logoutLog = new LogoutLog(plugin, player);
+        logoutLog.start();
+        logoutLog.join();
     }
 }
