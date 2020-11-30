@@ -56,7 +56,11 @@ public class MuteCommand extends Command {
         }
         String reason = str.toString().trim();
 
-        PunishMute.PunishMute(plugin, args[0], reason);
+        try {
+            PunishMute.PunishMute(plugin, args[0], reason);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
             if (CheckMuted.isMuted(plugin, args[0])) {

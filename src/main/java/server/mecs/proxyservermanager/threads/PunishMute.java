@@ -6,9 +6,19 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PunishMute{
+public class PunishMute extends Thread{
 
-    public static void PunishMute(ProxyServerManager plugin, String mcid, String reason){
+    ProxyServerManager plugin;
+    String mcid;
+    String reason;
+
+    public PunishMute(ProxyServerManager plugin, String mcid, String reason){
+        this.plugin = plugin;
+        this.mcid = mcid;
+        this.reason = reason;
+    }
+
+    public void run(){
         MySQLManager mysql = new MySQLManager(plugin, "PunishMute");
         ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
 
@@ -21,5 +31,11 @@ public class PunishMute{
         }finally {
             mysql.close();
         }
+    }
+
+    public static void PunishMute(ProxyServerManager plugin, String mcid, String reason) throws InterruptedException {
+        PunishMute punishMute = new PunishMute(plugin, mcid, reason);
+        punishMute.start();
+        punishMute.join();
     }
 }
