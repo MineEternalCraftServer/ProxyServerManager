@@ -11,12 +11,10 @@ public class getIDfromMCID implements Callable<Long> {
 
     ProxyServerManager plugin;
     String mcid;
-    public static Long id;
 
     public getIDfromMCID(ProxyServerManager plugin, String mcid){
         this.plugin = plugin;
         this.mcid = mcid;
-        id = null;
     }
 
     public static Long getIDfromMCID(ProxyServerManager plugin, String mcid) throws InterruptedException, ExecutionException {
@@ -32,7 +30,7 @@ public class getIDfromMCID implements Callable<Long> {
 
         try {
             if (rs.next()) {
-                if (rs.getString("discord_link").equals("An_Unlinked_Player")) id = null;
+                if (rs.getString("discord_link").equals("An_Unlinked_Player")) return null;
                 return rs.getLong("discord_link");
             }
         } catch (SQLException e) {
