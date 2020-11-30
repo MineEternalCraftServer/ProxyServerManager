@@ -13,6 +13,8 @@ import server.mecs.proxyservermanager.threads.PunishmentLog;
 import server.mecs.proxyservermanager.threads.getUUIDfromName;
 import server.mecs.proxyservermanager.utils.getDate;
 
+import java.util.concurrent.ExecutionException;
+
 public class UnMuteCommand extends Command {
 
     ProxyServerManager plugin = null;
@@ -46,7 +48,7 @@ public class UnMuteCommand extends Command {
                 sender.sendMessage(new ComponentBuilder("§cThat player has been not muted from this server.").create());
                 return;
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -77,7 +79,7 @@ public class UnMuteCommand extends Command {
             } else {
                 sender.sendMessage(new ComponentBuilder("§cFailed to unmuted that player.").create());
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
