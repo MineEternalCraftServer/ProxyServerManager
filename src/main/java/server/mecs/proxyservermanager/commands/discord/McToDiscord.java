@@ -70,7 +70,11 @@ public class McToDiscord extends Command {
             if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
                 plugin.discord.removeRole(sender.getName());
                 plugin.discord.guild.modifyNickname(plugin.discord.guild.getMemberById(getIDfromMCID.getIDfromMCID(plugin, sender.getName())), "An_Unlinked_Player").queue();
-                AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
+                try {
+                    AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
                         "§aYour account has been unsynced.").create());
                 return;

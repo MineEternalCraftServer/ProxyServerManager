@@ -233,7 +233,11 @@ public class Discord extends ListenerAdapter {
         public void run() {
             Long userID = user.getIdLong();
             if (CheckSynced.isSynced(plugin, null, userID)) {
-                AccountUnSync.AccountUnSync(plugin, null, userID);
+                try {
+                    AccountUnSync.AccountUnSync(plugin, null, userID);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
