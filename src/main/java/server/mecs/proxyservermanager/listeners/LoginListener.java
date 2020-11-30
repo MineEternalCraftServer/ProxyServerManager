@@ -27,7 +27,7 @@ public class LoginListener implements Listener {
 
         if (CheckBanned.isBanned(plugin, player.getName())) {
             String reason = getBanReason.getBanReason(plugin, player.getName());
-            e.getPlayer().disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
+            e.getPlayer().disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n \n§7Reason: §f" + reason).create());
             return;
         }
 

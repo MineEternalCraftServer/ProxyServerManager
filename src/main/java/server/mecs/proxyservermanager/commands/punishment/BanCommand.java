@@ -75,7 +75,7 @@ public class BanCommand extends Command {
 
         if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
-            player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
+            player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n \n§7Reason: §f" + reason).create());
         }
 
         sender.sendMessage(new ComponentBuilder("§aThat player has been successfully banned.").create());
