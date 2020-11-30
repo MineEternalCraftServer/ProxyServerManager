@@ -124,8 +124,13 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent e) {
-        onMemberRemove subclass = new onMemberRemove(e.getUser());
-        subclass.start();
+        try {
+            if (CheckSynced.isSynced(plugin, null, e.getUser().getIdLong())) {
+                AccountUnSync.AccountUnSync(plugin, null, e.getUser().getIdLong());
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -188,14 +193,18 @@ public class Discord extends ListenerAdapter {
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
                 return;
             }
-        } catch (NullPointerException ex) {
+        } catch (NullPointerException | InterruptedException ex) {
             e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
             return;
         }
 
-        if (CheckSynced.isSynced(plugin, null, e.getMessage().getAuthor().getIdLong())) {
-            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
-            return;
+        try {
+            if (CheckSynced.isSynced(plugin, null, e.getMessage().getAuthor().getIdLong())) {
+                e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
+                return;
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
 
         try {
@@ -221,24 +230,5 @@ public class Discord extends ListenerAdapter {
 
     public void removeRole(String mcid) {
         guild.removeRoleFromMember(getIDfromMCID.getIDfromMCID(plugin, mcid), guild.getRoleById(753582521685377034L)).queue();
-    }
-
-    class onMemberRemove extends Thread {
-        User user;
-
-        public onMemberRemove(User user) {
-            this.user = user;
-        }
-
-        public void run() {
-            Long userID = user.getIdLong();
-            if (CheckSynced.isSynced(plugin, null, userID)) {
-                try {
-                    AccountUnSync.AccountUnSync(plugin, null, userID);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 }

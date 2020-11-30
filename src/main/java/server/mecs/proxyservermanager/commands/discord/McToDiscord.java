@@ -1,7 +1,6 @@
 package server.mecs.proxyservermanager.commands.discord;
 
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -35,49 +34,55 @@ public class McToDiscord extends Command {
             return;
         }
         if (args[0].equals("sync")) {
-            ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-                if (number.containsKey(sender.getName())) {
-                    sender.sendMessage(new ComponentBuilder("§cあなたはすでに連携を申請中です。\n§cしばらく待ってからもう一度試してください。\n" +
-                            "§cYou are already in the process of requesting an account sync.\n§cPlease wait a while and try again.").create());
-                    sender.sendMessage(new ComponentBuilder("§c/discord cancel").create());
-                    return;
-                }
-                ProxiedPlayer player = (ProxiedPlayer) sender;
-                UUID uuid = player.getUniqueId();
-                if (plugin.MuteMap.containsKey(uuid)) {
-                    sender.sendMessage(new ComponentBuilder("§cあなたは現在Muteされているためアカウント同期をできません。\n" +
-                            "§cYou are currently Mute and therefore unable to sync your account.").create());
-                    return;
-                }
+            if (number.containsKey(sender.getName())) {
+                sender.sendMessage(new ComponentBuilder("§cあなたはすでに連携を申請中です。\n§cしばらく待ってからもう一度試してください。\n" +
+                        "§cYou are already in the process of requesting an account sync.\n§cPlease wait a while and try again.").create());
+                sender.sendMessage(new ComponentBuilder("§c/discord cancel").create());
+                return;
+            }
+            ProxiedPlayer player = (ProxiedPlayer) sender;
+            UUID uuid = player.getUniqueId();
+            if (plugin.MuteMap.containsKey(uuid)) {
+                sender.sendMessage(new ComponentBuilder("§cあなたは現在Muteされているためアカウント同期をできません。\n" +
+                        "§cYou are currently Mute and therefore unable to sync your account.").create());
+                return;
+            }
+            try {
                 if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
                     sender.sendMessage(new ComponentBuilder("§cあなたはすでにアカウントを同期しています。\n" +
                             "§cYou have already synced your account.").create());
                     return;
                 }
-                int randomNumber = (int) (Math.random() * 9999);
-                if (randomNumber <= 1000) {
-                    randomNumber = randomNumber + 1000;
-                }
-                number.put(sender.getName(), randomNumber);
-                sender.sendMessage(new ComponentBuilder("§aあなたの認証IDは §b" + number.get(sender.getName()) + "§a です。\n" +
-                        "§aこの認証IDをDiscordのMECS Bot#2386のDMに送信してください。\n" +
-                        "§aYour authentication ID is §b" + number.get(sender.getName()) + "\n" +
-                        "§aPlease send this authentication ID to the direct message on MECS Bot#2386.").create());
-            });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int randomNumber = (int) (Math.random() * 9999);
+            if (randomNumber <= 1000) {
+                randomNumber = randomNumber + 1000;
+            }
+            number.put(sender.getName(), randomNumber);
+            sender.sendMessage(new ComponentBuilder("§aあなたの認証IDは §b" + number.get(sender.getName()) + "§a です。\n" +
+                    "§aこの認証IDをDiscordのMECS Bot#2386のDMに送信してください。\n" +
+                    "§aYour authentication ID is §b" + number.get(sender.getName()) + "\n" +
+                    "§aPlease send this authentication ID to the direct message on MECS Bot#2386.").create());
         }
 
         if (args[0].equals("unsync")) {
-            if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
-                plugin.discord.removeRole(sender.getName());
-                plugin.discord.guild.modifyNickname(plugin.discord.guild.getMemberById(getIDfromMCID.getIDfromMCID(plugin, sender.getName())), "An_Unlinked_Player").queue();
-                try {
-                    AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            try {
+                if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
+                    plugin.discord.removeRole(sender.getName());
+                    plugin.discord.guild.modifyNickname(plugin.discord.guild.getMemberById(getIDfromMCID.getIDfromMCID(plugin, sender.getName())), "An_Unlinked_Player").queue();
+                    try {
+                        AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
+                            "§aYour account has been unsynced.").create());
+                    return;
                 }
-                sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
-                        "§aYour account has been unsynced.").create());
-                return;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +
                     "§cYou have not synced your account.").create());

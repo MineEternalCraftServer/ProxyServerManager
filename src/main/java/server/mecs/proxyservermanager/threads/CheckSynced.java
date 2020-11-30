@@ -6,9 +6,21 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CheckSynced {
+public class CheckSynced extends Thread{
 
-    public static boolean isSynced(ProxyServerManager plugin, String mcid, Long id){
+    ProxyServerManager plugin;
+    String mcid;
+    Long id;
+    public static boolean result = false;
+
+    public CheckSynced(ProxyServerManager plugin, String mcid, Long id){
+        this.plugin = plugin;
+        this.mcid = mcid;
+        this.id = id;
+        result = false;
+    }
+
+    public void run(){
         MySQLManager mysql = new MySQLManager(plugin, "CheckSynced");
 
         if (mcid != null){
@@ -16,7 +28,7 @@ public class CheckSynced {
 
             try {
                 if (rs.next()){
-                    return !rs.getString("discord_link").equals("An_Unlinked_Player");
+                    result = !rs.getString("discord_link").equals("An_Unlinked_Player");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -29,13 +41,20 @@ public class CheckSynced {
             ResultSet rs = mysql.query("SELECT * FROM player_data WHERE discord_link='" + id + "';");
 
             try {
-                return rs.next();
+                result = rs.next();
             } catch (SQLException e) {
                 e.printStackTrace();
             }finally {
                 mysql.close();
             }
         }
-        return false;
+        result = false;
+    }
+
+    public static boolean isSynced(ProxyServerManager plugin, String mcid, Long id) throws InterruptedException {
+        CheckSynced checkSynced = new CheckSynced(plugin, mcid, id);
+        checkSynced.start();
+        checkSynced.join();
+        return result;
     }
 }
