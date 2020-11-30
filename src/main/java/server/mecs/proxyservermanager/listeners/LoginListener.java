@@ -9,6 +9,8 @@ import net.md_5.bungee.event.EventHandler;
 import server.mecs.proxyservermanager.ProxyServerManager;
 import server.mecs.proxyservermanager.threads.*;
 
+import java.util.concurrent.ExecutionException;
+
 public class LoginListener implements Listener {
 
     ProxyServerManager plugin = null;
@@ -18,7 +20,7 @@ public class LoginListener implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PostLoginEvent e) throws InterruptedException {
+    public void onLogin(PostLoginEvent e) throws InterruptedException, ExecutionException {
         ProxiedPlayer player = e.getPlayer();
 
         PlayerData.PlayerData(plugin, player);
