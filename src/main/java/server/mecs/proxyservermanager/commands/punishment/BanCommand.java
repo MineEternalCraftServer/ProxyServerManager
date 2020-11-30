@@ -13,6 +13,8 @@ import server.mecs.proxyservermanager.threads.PunishmentLog;
 import server.mecs.proxyservermanager.threads.getUUIDfromName;
 import server.mecs.proxyservermanager.utils.getDate;
 
+import java.util.concurrent.ExecutionException;
+
 public class BanCommand extends Command {
 
     ProxyServerManager plugin = null;
@@ -46,7 +48,7 @@ public class BanCommand extends Command {
                 sender.sendMessage(new ComponentBuilder("§cThat player has already been banned from this server.").create());
                 return;
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -67,7 +69,7 @@ public class BanCommand extends Command {
                 sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
                 return;
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
