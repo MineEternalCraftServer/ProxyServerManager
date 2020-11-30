@@ -56,7 +56,11 @@ public class BanCommand extends Command {
         }
         String reason = str.toString().trim();
 
-        PunishBan.PunishBan(plugin, args[0], reason);
+        try {
+            PunishBan.PunishBan(plugin, args[0], reason);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
             if (!(CheckBanned.isBanned(plugin, args[0]))) {
