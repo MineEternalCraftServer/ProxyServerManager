@@ -24,70 +24,73 @@ public class BanCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            if (!(sender.hasPermission("server.punish"))) {
-                sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
+        if (!(sender.hasPermission("server.punish"))) {
+            sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
+            return;
+        }
+
+        if (!(args.length >= 2)) {
+            sender.sendMessage(new ComponentBuilder("").create());
+            sender.sendMessage(new ComponentBuilder("§c/ban <player> <reason>").create());
+            sender.sendMessage(new ComponentBuilder("").create());
+            return;
+        }
+
+        if (args[0] == sender.getName()) {
+            sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
+            return;
+        }
+
+        try {
+            if (CheckBanned.isBanned(plugin, args[0])) {
+                sender.sendMessage(new ComponentBuilder("§cThat player has already been banned from this server.").create());
                 return;
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-            if (!(args.length >= 2)) {
-                sender.sendMessage(new ComponentBuilder("").create());
-                sender.sendMessage(new ComponentBuilder("§c/ban <player> <reason>").create());
-                sender.sendMessage(new ComponentBuilder("").create());
+        StringBuilder str = new StringBuilder();
+        for (int i = 1; i < args.length; i++) {
+            str.append(args[i] + " ");
+        }
+        String reason = str.toString().trim();
+
+        PunishBan.PunishBan(plugin, args[0], reason);
+
+        try {
+            if (!(CheckBanned.isBanned(plugin, args[0]))) {
+                sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
                 return;
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-            if (args[0] == sender.getName()) {
-                sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
-                return;
-            }
+        if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
+            player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
+        }
 
-            try {
-                if (CheckBanned.isBanned(plugin, args[0])) {
-                    sender.sendMessage(new ComponentBuilder("§cThat player has already been banned from this server.").create());
-                    return;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        sender.sendMessage(new ComponentBuilder("§aThat player has been successfully banned.").create());
+        StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been permanently banned by " + sender.getName() + " §cfor " + reason);
 
-            StringBuilder str = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
-                str.append(args[i] + " ");
-            }
-            String reason = str.toString().trim();
+        ProxyServer.getInstance().broadcast(new ComponentBuilder("§c§lA player has been removed from the server for hacking or abuse.\n" +
+                "§bThanks for reporting it!").create());
 
-            PunishBan.PunishBan(plugin, args[0], reason);
+        String uuid = null;
+        try {
+            uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String date = getDate.getDate();
 
-            try {
-                if (!(CheckBanned.isBanned(plugin, args[0]))) {
-                    sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
-                    return;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
-                player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
-            }
-
-            sender.sendMessage(new ComponentBuilder("§aThat player has been successfully banned.").create());
-            StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been permanently banned by " + sender.getName() + " §cfor " + reason);
-
-            ProxyServer.getInstance().broadcast(new ComponentBuilder("§c§lA player has been removed from the server for hacking or abuse.\n" +
-                    "§bThanks for reporting it!").create());
-
-            String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
-            String date = getDate.getDate();
-
-            if (sender instanceof ProxiedPlayer) {
-                PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "BAN", reason, date);
-            } else {
-                PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "BAN", reason, date);
-            }
-        });
+        if (sender instanceof ProxiedPlayer) {
+            PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "BAN", reason, date);
+        } else {
+            PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "BAN", reason, date);
+        }
     }
 }
 
