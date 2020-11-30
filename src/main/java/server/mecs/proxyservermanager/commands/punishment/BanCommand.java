@@ -87,7 +87,7 @@ public class BanCommand extends Command {
         String uuid = null;
         try {
             uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         String date = getDate.getDate();

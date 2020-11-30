@@ -11,6 +11,8 @@ import server.mecs.proxyservermanager.threads.PunishmentLog;
 import server.mecs.proxyservermanager.threads.getUUIDfromName;
 import server.mecs.proxyservermanager.utils.getDate;
 
+import java.util.concurrent.ExecutionException;
+
 public class KickCommand extends Command {
 
     ProxyServerManager plugin = null;
@@ -49,7 +51,7 @@ public class KickCommand extends Command {
         String uuid = null;
         try {
             uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         String date = getDate.getDate();

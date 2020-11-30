@@ -5,40 +5,38 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.*;
 
-public class getUUIDfromName extends Thread{
+public class getUUIDfromName implements Callable<String> {
 
     ProxyServerManager plugin;
     String mcid;
-    public static String uuid;
 
     public getUUIDfromName(ProxyServerManager plugin, String mcid){
         this.plugin = plugin;
         this.mcid = mcid;
-        uuid = null;
     }
 
-    public void run(){
+    public static String getUUIDfromName(ProxyServerManager plugin, String mcid) throws InterruptedException, ExecutionException {
+        ExecutorService ex = Executors.newSingleThreadExecutor();
+        Future<String> futureresult = ex.submit(new getUUIDfromName(plugin, mcid));
+        return futureresult.get();
+    }
+
+    @Override
+    public String call() throws Exception {
         MySQLManager mysql = new MySQLManager(plugin, "getUUID");
         ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
 
         try{
             if (rs.next()){
-                uuid = rs.getString("uuid");
+                return rs.getString("uuid");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
             mysql.close();
         }
-        uuid = null;
+        return null;
     }
-
-    public static String getUUIDfromName(ProxyServerManager plugin, String mcid) throws InterruptedException {
-        getUUIDfromName getUUIDfromName = new getUUIDfromName(plugin, mcid);
-        getUUIDfromName.start();
-        getUUIDfromName.join();
-        return uuid;
-    }
-
 }
