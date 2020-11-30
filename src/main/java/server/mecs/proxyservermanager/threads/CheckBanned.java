@@ -15,6 +15,7 @@ public class CheckBanned extends Thread {
     public CheckBanned(ProxyServerManager plugin, String mcid) {
         this.plugin = plugin;
         this.mcid = mcid;
+        result = false;
     }
 
     public void run(){
