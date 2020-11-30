@@ -27,6 +27,7 @@ import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class Discord extends ListenerAdapter {
     public ProxyServerManager plugin = null;
@@ -128,7 +129,7 @@ public class Discord extends ListenerAdapter {
             if (CheckSynced.isSynced(plugin, null, e.getUser().getIdLong())) {
                 AccountUnSync.AccountUnSync(plugin, null, e.getUser().getIdLong());
             }
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
         }
     }
@@ -193,7 +194,7 @@ public class Discord extends ListenerAdapter {
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
                 return;
             }
-        } catch (NullPointerException | InterruptedException ex) {
+        } catch (NullPointerException | InterruptedException | ExecutionException ex) {
             e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease try again.").queue();
             return;
         }
@@ -203,7 +204,7 @@ public class Discord extends ListenerAdapter {
                 e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nApparently your account has already have sync.").queue();
                 return;
             }
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
         }
 

@@ -12,6 +12,7 @@ import server.mecs.proxyservermanager.threads.getIDfromMCID;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class McToDiscord extends Command {
 
@@ -53,7 +54,7 @@ public class McToDiscord extends Command {
                             "§cYou have already synced your account.").create());
                     return;
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             int randomNumber = (int) (Math.random() * 9999);
@@ -81,7 +82,7 @@ public class McToDiscord extends Command {
                             "§aYour account has been unsynced.").create());
                     return;
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +

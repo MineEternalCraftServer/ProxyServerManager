@@ -5,8 +5,9 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.*;
 
-public class CheckSynced extends Thread{
+public class CheckSynced implements Callable<Boolean> {
 
     ProxyServerManager plugin;
     String mcid;
@@ -20,7 +21,14 @@ public class CheckSynced extends Thread{
         result = false;
     }
 
-    public void run(){
+    public static boolean isSynced(ProxyServerManager plugin, String mcid, Long id) throws InterruptedException, ExecutionException {
+        ExecutorService ex = Executors.newSingleThreadExecutor();
+        Future<Boolean> futureresult = ex.submit(new CheckSynced(plugin, mcid, id));
+        return futureresult.get();
+    }
+
+    @Override
+    public Boolean call() throws Exception {
         MySQLManager mysql = new MySQLManager(plugin, "CheckSynced");
 
         if (mcid != null){
@@ -28,7 +36,7 @@ public class CheckSynced extends Thread{
 
             try {
                 if (rs.next()){
-                    result = !rs.getString("discord_link").equals("An_Unlinked_Player");
+                    return  !rs.getString("discord_link").equals("An_Unlinked_Player");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -41,20 +49,13 @@ public class CheckSynced extends Thread{
             ResultSet rs = mysql.query("SELECT * FROM player_data WHERE discord_link='" + id + "';");
 
             try {
-                result = rs.next();
+                return rs.next();
             } catch (SQLException e) {
                 e.printStackTrace();
             }finally {
                 mysql.close();
             }
         }
-        result = false;
-    }
-
-    public static boolean isSynced(ProxyServerManager plugin, String mcid, Long id) throws InterruptedException {
-        CheckSynced checkSynced = new CheckSynced(plugin, mcid, id);
-        checkSynced.start();
-        checkSynced.join();
-        return result;
+        return false;
     }
 }
