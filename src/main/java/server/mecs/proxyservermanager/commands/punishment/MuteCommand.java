@@ -24,37 +24,41 @@ public class MuteCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            if (!(sender.hasPermission("server.punish"))) {
-                sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
-                return;
-            }
+        if (!(sender.hasPermission("server.punish"))) {
+            sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
+            return;
+        }
 
-            if (!(args.length >= 2)) {
-                sender.sendMessage(new ComponentBuilder("").create());
-                sender.sendMessage(new ComponentBuilder("§c/mute <player> <reason>").create());
-                sender.sendMessage(new ComponentBuilder("").create());
-                return;
-            }
+        if (!(args.length >= 2)) {
+            sender.sendMessage(new ComponentBuilder("").create());
+            sender.sendMessage(new ComponentBuilder("§c/mute <player> <reason>").create());
+            sender.sendMessage(new ComponentBuilder("").create());
+            return;
+        }
 
-            if (args[0] == sender.getName()) {
-                sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
-                return;
-            }
+        if (args[0] == sender.getName()) {
+            sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
+            return;
+        }
 
+        try {
             if (CheckMuted.isMuted(plugin, args[0])) {
                 sender.sendMessage(new ComponentBuilder("§cThat player has already been muted from this server.").create());
                 return;
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-            StringBuilder str = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
-                str.append(args[i] + " ");
-            }
-            String reason = str.toString().trim();
+        StringBuilder str = new StringBuilder();
+        for (int i = 1; i < args.length; i++) {
+            str.append(args[i] + " ");
+        }
+        String reason = str.toString().trim();
 
-            PunishMute.PunishMute(plugin, args[0], reason);
+        PunishMute.PunishMute(plugin, args[0], reason);
 
+        try {
             if (CheckMuted.isMuted(plugin, args[0])) {
 
                 if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
@@ -76,6 +80,8 @@ public class MuteCommand extends Command {
             } else {
                 sender.sendMessage(new ComponentBuilder("§cFailed to muted that player.").create());
             }
-        });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

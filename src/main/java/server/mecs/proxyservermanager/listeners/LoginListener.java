@@ -18,19 +18,15 @@ public class LoginListener implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PostLoginEvent e) {
+    public void onLogin(PostLoginEvent e) throws InterruptedException {
         ProxiedPlayer player = e.getPlayer();
 
         PlayerData.PlayerData(plugin, player);
 
-        try {
-            if (CheckBanned.isBanned(plugin, player.getName())) {
-                String reason = getBanReason.getBanReason(plugin, player.getName());
-                e.getPlayer().disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
-                return;
-            }
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        if (CheckBanned.isBanned(plugin, player.getName())) {
+            String reason = getBanReason.getBanReason(plugin, player.getName());
+            e.getPlayer().disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n§7Reason: §f" + reason).create());
+            return;
         }
 
         if (CheckMuted.isMuted(plugin, player.getName())) {

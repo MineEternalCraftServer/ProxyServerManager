@@ -24,31 +24,35 @@ public class UnMuteCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            if (!(sender.hasPermission("server.punish"))) {
-                sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
-                return;
-            }
+        if (!(sender.hasPermission("server.punish"))) {
+            sender.sendMessage(new ComponentBuilder("§cYou do not have permission to use this command.").create());
+            return;
+        }
 
-            if (args.length != 1) {
-                sender.sendMessage(new ComponentBuilder("").create());
-                sender.sendMessage(new ComponentBuilder("§c/unmute <player> <reason>").create());
-                sender.sendMessage(new ComponentBuilder("").create());
-                return;
-            }
+        if (args.length != 1) {
+            sender.sendMessage(new ComponentBuilder("").create());
+            sender.sendMessage(new ComponentBuilder("§c/unmute <player> <reason>").create());
+            sender.sendMessage(new ComponentBuilder("").create());
+            return;
+        }
 
-            if (args[0] == sender.getName()) {
-                sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
-                return;
-            }
+        if (args[0] == sender.getName()) {
+            sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
+            return;
+        }
 
+        try {
             if (!(CheckMuted.isMuted(plugin, args[0]))) {
                 sender.sendMessage(new ComponentBuilder("§cThat player has been not muted from this server.").create());
                 return;
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-            PunishUnMute.PunishUnMute(plugin, args[0]);
+        PunishUnMute.PunishUnMute(plugin, args[0]);
 
+        try {
             if (!(CheckMuted.isMuted(plugin, args[0]))) {
                 if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
                     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
@@ -69,6 +73,8 @@ public class UnMuteCommand extends Command {
             } else {
                 sender.sendMessage(new ComponentBuilder("§cFailed to unmuted that player.").create());
             }
-        });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
