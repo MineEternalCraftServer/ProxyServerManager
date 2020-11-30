@@ -54,10 +54,14 @@ public class KickCommand extends Command {
         }
         String date = getDate.getDate();
 
-        if (sender instanceof ProxiedPlayer) {
-            PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "KICK", reason, date);
-        } else {
-            PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "KICK", reason, date);
+        try {
+            if (sender instanceof ProxiedPlayer) {
+                PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "KICK", reason, date);
+            } else {
+                PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "KICK", reason, date);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
