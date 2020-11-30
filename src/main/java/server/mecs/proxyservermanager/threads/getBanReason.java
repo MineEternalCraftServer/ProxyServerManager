@@ -28,7 +28,9 @@ public class getBanReason implements Callable<String> {
         MySQLManager mysql = new MySQLManager(plugin, "getBanReason");
         ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
         try {
-            return rs.getString("ban_reason");
+            if (rs.next()) {
+                return rs.getString("ban_reason");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
