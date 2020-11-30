@@ -50,7 +50,11 @@ public class UnMuteCommand extends Command {
             e.printStackTrace();
         }
 
-        PunishUnMute.PunishUnMute(plugin, args[0]);
+        try {
+            PunishUnMute.PunishUnMute(plugin, args[0]);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
             if (!(CheckMuted.isMuted(plugin, args[0]))) {
