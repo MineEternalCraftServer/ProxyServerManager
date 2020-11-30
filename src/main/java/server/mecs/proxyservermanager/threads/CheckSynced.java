@@ -12,13 +12,11 @@ public class CheckSynced implements Callable<Boolean> {
     ProxyServerManager plugin;
     String mcid;
     Long id;
-    public static boolean result = false;
 
     public CheckSynced(ProxyServerManager plugin, String mcid, Long id){
         this.plugin = plugin;
         this.mcid = mcid;
         this.id = id;
-        result = false;
     }
 
     public static boolean isSynced(ProxyServerManager plugin, String mcid, Long id) throws InterruptedException, ExecutionException {

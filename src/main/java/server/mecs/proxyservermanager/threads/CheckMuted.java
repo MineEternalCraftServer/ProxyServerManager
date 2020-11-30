@@ -11,12 +11,10 @@ public class CheckMuted implements Callable<Boolean> {
 
     public ProxyServerManager plugin;
     public String mcid;
-    public static boolean result = false;
 
     public CheckMuted(ProxyServerManager plugin, String mcid) {
         this.plugin = plugin;
         this.mcid = mcid;
-        result = false;
     }
 
     public static boolean isMuted(ProxyServerManager plugin, String mcid) throws InterruptedException, ExecutionException {
