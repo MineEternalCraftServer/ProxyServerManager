@@ -49,7 +49,11 @@ public class UnBanCommand extends Command {
             e.printStackTrace();
         }
 
-        PunishUnBan.PunishUnBan(plugin, args[0]);
+        try {
+            PunishUnBan.PunishUnBan(plugin, args[0]);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
             if (!(CheckBanned.isBanned(plugin, args[0]))) {
