@@ -42,9 +42,13 @@ public class BanCommand extends Command {
                 return;
             }
 
-            if (CheckBanned.isBanned(plugin, args[0])) {
-                sender.sendMessage(new ComponentBuilder("§cThat player has already been banned from this server.").create());
-                return;
+            try {
+                if (CheckBanned.isBanned(plugin, args[0])) {
+                    sender.sendMessage(new ComponentBuilder("§cThat player has already been banned from this server.").create());
+                    return;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             StringBuilder str = new StringBuilder();
@@ -55,9 +59,13 @@ public class BanCommand extends Command {
 
             PunishBan.PunishBan(plugin, args[0], reason);
 
-            if (!(CheckBanned.isBanned(plugin, args[0]))) {
-                sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
-                return;
+            try {
+                if (!(CheckBanned.isBanned(plugin, args[0]))) {
+                    sender.sendMessage(new ComponentBuilder("§cFailed to banned that player.").create());
+                    return;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
