@@ -228,7 +228,7 @@ public class Discord extends ListenerAdapter {
         return null;
     }
 
-    public void removeRole(String mcid) {
+    public void removeRole(String mcid) throws InterruptedException {
         guild.removeRoleFromMember(getIDfromMCID.getIDfromMCID(plugin, mcid), guild.getRoleById(753582521685377034L)).queue();
     }
 }
