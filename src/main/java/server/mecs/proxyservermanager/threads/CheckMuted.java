@@ -25,18 +25,14 @@ public class CheckMuted implements Callable<Boolean> {
 
     @Override
     public Boolean call() throws Exception {
-        MySQLManager mysql = new MySQLManager(plugin, "CheckBanned");
-        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
-
-        try {
+        try(MySQLManager mysql = new MySQLManager(plugin, "CheckBanned");
+            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';")) {
             if (rs.next()) {
                 return rs.getBoolean("isMuted");
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            mysql.close();
         }
         return false;
     }

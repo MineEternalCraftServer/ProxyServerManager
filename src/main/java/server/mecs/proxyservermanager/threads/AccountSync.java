@@ -16,9 +16,9 @@ public class AccountSync extends Thread{
     }
 
     public void run(){
-        MySQLManager mysql = new MySQLManager(plugin, "AccountSync");
-        mysql.execute("UPDATE player_data SET discord_link='" + id + "' WHERE mcid='" + player + "';");
-        mysql.close();
+        try(MySQLManager mysql = new MySQLManager(plugin, "AccountSync")){
+            mysql.execute("UPDATE player_data SET discord_link='" + id + "' WHERE mcid='" + player + "';");
+        }
     }
 
     public static void AccountSync(ProxyServerManager plugin, String player, Long id) throws InterruptedException {

@@ -16,18 +16,19 @@ public class LoginLog extends Thread{
     }
 
     public void run(){
-        String address = player.getAddress().getHostString();
+        try(MySQLManager mysql = new MySQLManager(plugin, "LoginLog")) {
+            String address = player.getAddress().getHostString();
 
-        if (address == null){
-            plugin.getLogger().info(player.getName() + "のIPアドレスの取得に失敗");
+            if (address == null) {
+                plugin.getLogger().info(player.getName() + "のIPアドレスの取得に失敗");
+            }
+
+            mysql.execute("INSERT INTO login_log (mcid,uuid,address,date) " +
+                    "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','" + address + "','" + getDate.getDate() + "');");
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        MySQLManager mysql = new MySQLManager(plugin, "LoginLog");
-
-        mysql.execute("INSERT INTO login_log (mcid,uuid,address,date) " +
-                "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','" + address + "','" + getDate.getDate() + "');");
-
-        mysql.close();
     }
 
     public static void LoginLog(ProxyServerManager plugin, ProxiedPlayer player) throws InterruptedException {

@@ -25,16 +25,13 @@ public class getBanReason implements Callable<String> {
 
     @Override
     public String call() throws Exception {
-        MySQLManager mysql = new MySQLManager(plugin, "getBanReason");
-        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
-        try {
+        try(MySQLManager mysql = new MySQLManager(plugin, "getBanReason");
+            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';")) {
             if (rs.next()) {
                 return rs.getString("ban_reason");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            mysql.close();
         }
         return null;
     }

@@ -18,10 +18,8 @@ public class PlayerData extends Thread{
     }
 
     public void run(){
-        MySQLManager mysql = new MySQLManager(plugin, "PlayerData");
-        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE uuid='" + player.getUniqueId() + "';");
-
-        try {
+        try( MySQLManager mysql = new MySQLManager(plugin, "PlayerData");
+             ResultSet rs = mysql.query("SELECT * FROM player_data WHERE uuid='" + player.getUniqueId() + "';")) {
             if (rs.next()){
                 if (rs.getString("mcid") != player.getName()){
                     mysql.execute("UPDATE player_data SET mcid='" + player.getName() + "' WHERE uuid='" + player.getUniqueId() + "';");
@@ -32,8 +30,6 @@ public class PlayerData extends Thread{
                     "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','false','false','','');");
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            mysql.close();
         }
     }
 

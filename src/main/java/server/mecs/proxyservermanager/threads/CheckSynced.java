@@ -27,31 +27,31 @@ public class CheckSynced implements Callable<Boolean> {
 
     @Override
     public Boolean call() throws Exception {
-        MySQLManager mysql = new MySQLManager(plugin, "CheckSynced");
+        try(MySQLManager mysql = new MySQLManager(plugin, "CheckSynced")) {
+            if (mcid != null){
+                ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
 
-        if (mcid != null){
-            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
-
-            try {
-                if (rs.next()){
-                    return  !rs.getString("discord_link").equals("An_Unlinked_Player");
+                try {
+                    if (rs.next()){
+                        return  !rs.getString("discord_link").equals("An_Unlinked_Player");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }finally {
+                    mysql.close();
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally {
-                mysql.close();
             }
-        }
 
-        if (id != null){
-            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE discord_link='" + id + "';");
+            if (id != null){
+                ResultSet rs = mysql.query("SELECT * FROM player_data WHERE discord_link='" + id + "';");
 
-            try {
-                return rs.next();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally {
-                mysql.close();
+                try {
+                    return rs.next();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }finally {
+                    mysql.close();
+                }
             }
         }
         return false;

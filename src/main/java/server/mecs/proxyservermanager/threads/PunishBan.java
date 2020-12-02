@@ -19,17 +19,13 @@ public class PunishBan extends Thread{
     }
 
     public void run(){
-        MySQLManager mysql = new MySQLManager(plugin, "PunishBan");
-        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
-
-        try {
+        try(MySQLManager mysql = new MySQLManager(plugin, "PunishBan");
+            ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';")) {
             if (rs.next()){
                 mysql.execute("UPDATE player_data SET isBanned=true, ban_reason='" + reason + "' WHERE mcid='" + mcid + "';");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            mysql.close();
         }
     }
 

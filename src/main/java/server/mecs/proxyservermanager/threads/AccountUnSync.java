@@ -16,16 +16,15 @@ public class AccountUnSync extends Thread{
     }
 
     public void run(){
-        MySQLManager mysql = new MySQLManager(plugin, "AccountUnSync");
+        try(MySQLManager mysql = new MySQLManager(plugin, "AccountUnSync")) {
+            if (player != null){
+                mysql.execute("UPDATE player_data SET discord_link='An_Unlinked_Player' WHERE mcid='" + player + "';");
+            }
 
-        if (player != null){
-            mysql.execute("UPDATE player_data SET discord_link='An_Unlinked_Player' WHERE mcid='" + player + "';");
+            if (id != null){
+                mysql.execute("UPDATE player_data SET discord_link='An_Unlinked_Player' WHERE discord_link='" + id + "';");
+            }
         }
-
-        if (id != null){
-            mysql.execute("UPDATE player_data SET discord_link='An_Unlinked_Player' WHERE discord_link='" + id + "';");
-        }
-        mysql.close();
     }
 
     public static void AccountUnSync(ProxyServerManager plugin, String player, Long id) throws InterruptedException {

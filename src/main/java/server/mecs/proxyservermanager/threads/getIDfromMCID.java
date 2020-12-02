@@ -25,18 +25,14 @@ public class getIDfromMCID implements Callable<Long> {
 
     @Override
     public Long call() throws Exception {
-        MySQLManager mysql = new MySQLManager(plugin, "getIDfromMCID");
-        ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';");
-
-        try {
+        try( MySQLManager mysql = new MySQLManager(plugin, "getIDfromMCID");
+             ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';")) {
             if (rs.next()) {
                 if (rs.getString("discord_link").equals("An_Unlinked_Player")) return null;
                 return rs.getLong("discord_link");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            mysql.close();
         }
         return null;
     }

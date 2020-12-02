@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
-public class MySQLManager {
+public class MySQLManager implements AutoCloseable {
     Boolean debugMode = false;
     String HOST = null;
     String USER = null;
