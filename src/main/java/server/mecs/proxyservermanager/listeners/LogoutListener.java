@@ -36,7 +36,7 @@ public class LogoutListener implements Listener {
         }
 
         if (player.hasPermission("group.helper")) {
-            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §1" + e.getPlayer().getName() + "§6 left the network.").create());
+            ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §9" + e.getPlayer().getName() + "§6 left the network.").create());
             return;
         }
 
