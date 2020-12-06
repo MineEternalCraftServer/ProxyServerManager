@@ -6,8 +6,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import server.mecs.proxyservermanager.ProxyServerManager;
-import server.mecs.proxyservermanager.japanize.JapanizeType;
-import server.mecs.proxyservermanager.japanize.Japanizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +29,7 @@ public class TellCommand extends Command {
 
         // 引数が足らないので、Usageを表示して終了する。
         if (args.length <= 1) {
-            sendMessage(sender, "§c/$name <player> <message> : Send private message.");
+            sendMessage(sender, "§c/tell <player> <message> : Send private message.");
             return;
         }
 
@@ -73,11 +71,6 @@ public class TellCommand extends Command {
     protected void sendPrivateMessage(CommandSender sender, ProxiedPlayer reciever, String message) {
         // Japanizeの付加
         String msg = ChatColor.translateAlternateColorCodes('&', message);
-        String msgs = "";
-        msgs = Japanizer.japanize(msg, JapanizeType.GOOGLE_IME, dic);
-        if (!msgs.equalsIgnoreCase("")) {
-            msg = msg + " §6(" + msgs + ")";
-        }
 
         // フォーマットの適用
         String senderServer = "console";
@@ -92,7 +85,6 @@ public class TellCommand extends Command {
         sendMessage(reciever, endmsg);
         //履歴をput
         putHistory(reciever.getName(), sender.getName());
-        // コンソールに表示設定なら、コンソールに表示する
         plugin.getLogger().info(endmsg);
     }
 
