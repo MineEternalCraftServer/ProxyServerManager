@@ -21,13 +21,13 @@ public class PlayerData extends Thread{
         try( MySQLManager mysql = new MySQLManager(plugin, "PlayerData");
              ResultSet rs = mysql.query("SELECT * FROM player_data WHERE uuid='" + player.getUniqueId() + "';")) {
             if (rs.next()){
-                if (rs.getString("mcid") != player.getName()){
+                if (!rs.getString("mcid").equals(player.getName())){
                     mysql.execute("UPDATE player_data SET mcid='" + player.getName() + "' WHERE uuid='" + player.getUniqueId() + "';");
                 }
                 return;
             }
             mysql.execute("INSERT INTO player_data (mcid,uuid,discord_link,isBanned,isMuted,ban_reason,mute_reason) " +
-                    "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','false','false','','');");
+                    "VALUES ('" + player.getName() + "','" + player.getUniqueId() + "','An_Unlinked_Player','0','0','','');");
         } catch (SQLException e) {
             e.printStackTrace();
         }
