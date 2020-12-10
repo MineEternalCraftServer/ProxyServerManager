@@ -210,10 +210,13 @@ public class Discord extends ListenerAdapter {
 
         try {
             AccountSync.AccountSync(plugin, player, id);
-            guild.modifyNickname(guild.getMemberById(id), player).queue();
-            guild.addRoleToMember(id, guild.getRoleById(753582521685377034L)).queue();
-            McToDiscord.number.remove(player);
-            e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
+            if (CheckSynced.isSynced(plugin, null, id)){
+                guild.modifyNickname(guild.getMemberById(id), player).queue();
+                guild.addRoleToMember(id, guild.getRoleById(753582521685377034L)).queue();
+                McToDiscord.number.remove(player);
+                e.getMessage().getPrivateChannel().sendMessage("Successfully synced with your Minecraft account.").queue();
+            }
+            e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
         } catch (Exception ex) {
             ex.printStackTrace();
             e.getMessage().getPrivateChannel().sendMessage("Failed to account sync.\nPlease report to the Staff Team.").queue();
