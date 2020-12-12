@@ -1,8 +1,8 @@
 create table player_data
 (
     id int auto_increment,
-    mcid varchar(16) null,
-    uuid varchar(36) null,
+    mcid varchar(1000) null,
+    uuid varchar(1000) null,
     discord_link varchar(32) null,
     isBanned boolean default false,
     isMuted boolean default false,
@@ -15,8 +15,8 @@ create table player_data
 create table login_log
 (
     id int auto_increment,
-    mcid varchar(16) null,
-    uuid varchar(36) null,
+    mcid varchar(1000) null,
+    uuid varchar(1000) null,
     address varchar(32) null,
     date datetime null,
     constraint login_log_pk
@@ -26,8 +26,8 @@ create table login_log
 create table logout_log
 (
     id int auto_increment,
-    mcid varchar(16) null,
-    uuid varchar(36) null,
+    mcid varchar(1000) null,
+    uuid varchar(1000) null,
     address varchar(32) null,
     date datetime null,
     constraint login_log_pk
@@ -39,8 +39,8 @@ create table punish_log
     id int auto_increment,
     executioner_mcid varchar(16) null,
     executioner_uuid varchar(36) null,
-    target_mcid varchar(16) null,
-    target_uuid varchar(36) null,
+    target_mcid varchar(1000) null,
+    target_uuid varchar(1000) null,
     punish_type varchar(128) null,
     punish_reason text null,
     punish_date datetime null,

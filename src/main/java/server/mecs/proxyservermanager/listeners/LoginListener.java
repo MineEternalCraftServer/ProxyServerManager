@@ -27,7 +27,7 @@ public class LoginListener implements Listener {
 
         if (CheckBanned.isBanned(plugin, player.getName())) {
             String reason = getBanReason.getBanReason(plugin, player.getName());
-            e.getPlayer().disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n \n§7Reason: §f" + reason).create());
+            player.disconnect(new ComponentBuilder("§cYou are permanently banned from this server.\n \n§7Reason: §f" + reason).create());
             return;
         }
 
@@ -36,6 +36,10 @@ public class LoginListener implements Listener {
         }
 
         LoginLog.LoginLog(plugin, e.getPlayer());
+
+        if (player.getUniqueId().toString().length() != 32){
+            ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "Your account has a security alert.");
+        }
 
         if (player.hasPermission("group.owner") || player.hasPermission("group.administrator")) {
             ProxyServer.getInstance().broadcast(new ComponentBuilder("§b>§d>§b> §c" + e.getPlayer().getName() + "§6 joined the network.").create());
