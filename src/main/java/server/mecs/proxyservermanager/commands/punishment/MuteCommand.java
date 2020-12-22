@@ -38,7 +38,7 @@ public class MuteCommand extends Command {
             return;
         }
 
-        if (args[0] == sender.getName()) {
+        if (args[0].equals(sender.getName())) {
             sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
             return;
         }
