@@ -14,11 +14,15 @@ import server.mecs.proxyservermanager.listeners.LogoutListener;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class ProxyServerManager extends Plugin {
 
     public static Discord discord;
     public static HashMap<UUID, Boolean> MuteMap = new HashMap<>();
+
+    public static ExecutorService es = Executors.newCachedThreadPool();
 
     @Override
     public void onEnable() {
@@ -47,6 +51,12 @@ public final class ProxyServerManager extends Plugin {
         for (String command : new String[]{"mute"}) {
             getProxy().getPluginManager().registerCommand(this, new MuteCommand(this, command));
         }
+        for (String command : new String[]{"tempban"}) {
+            getProxy().getPluginManager().registerCommand(this, new TempBanCommand(this, command));
+        }
+        for (String command : new String[]{"tempmute"}) {
+            getProxy().getPluginManager().registerCommand(this, new TempMuteCommand(this, command));
+        }
         for (String command : new String[]{"kick"}) {
             getProxy().getPluginManager().registerCommand(this, new KickCommand(this, command));
         }
@@ -66,5 +76,6 @@ public final class ProxyServerManager extends Plugin {
     public void onDisable() {
         // Plugin shutdown logic
         discord.shutdown();
+        es.shutdown();
     }
 }
