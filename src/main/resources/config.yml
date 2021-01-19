@@ -4,9 +4,19 @@ Discord:
   ReportChannel:
   StaffChannel:
 
+ProxyChecker:
+  api:
+
 mysql:
   host: "localhost"
   user: "root"
   pass: "pass"
   port: "3306"
+  db: "ProxyServerManager"
+
+mongo:
+  host: "localhost"
+  user: "root"
+  pass: "pass"
+  port: "27017"
   db: "ProxyServerManager"
