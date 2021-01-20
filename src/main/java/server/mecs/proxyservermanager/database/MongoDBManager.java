@@ -3,7 +3,6 @@ package server.mecs.proxyservermanager.database;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import org.bson.Document;
@@ -100,22 +99,15 @@ public class MongoDBManager implements AutoCloseable {
     ////////////////////////////////
     //       UpdateOne Query
     ////////////////////////////////
-    public void queryUpdateOne(String filterKey, String filterValue, String updateKey, String updateValue) {
-        Document filterdoc = new Document();
-        Document updatedoc = new Document();
-        Document update = new Document();
-        filterdoc.append(filterKey, filterValue);
-        updatedoc.append(updateKey, updateValue);
-        update.append("$set", updatedoc);
-
-        coll.updateOne(filterdoc, update);
+    public void queryUpdateOne(String filter, String update) {
+        coll.updateOne(Document.parse(filter), Document.parse(update));
     }
 
     ////////////////////////////////
     //       DeleteOne Query
     ////////////////////////////////
-    public void queryDelete(String filterKey, String filterValue) {
-        coll.deleteOne(Filters.eq(filterKey, filterValue));
+    public void queryDelete(String filter) {
+        coll.deleteOne(Document.parse(filter));
     }
 
     ////////////////////////////////
@@ -129,8 +121,8 @@ public class MongoDBManager implements AutoCloseable {
     ////////////////////////////////
     //       Count Query
     ////////////////////////////////
-    public long queryCount() {
-        return coll.countDocuments();
+    public long queryCount(String doc) {
+        return coll.countDocuments(Document.parse(doc));
     }
 
     ////////////////////////////////
