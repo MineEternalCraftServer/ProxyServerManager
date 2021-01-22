@@ -66,13 +66,5 @@ class ProxyServerManager : Plugin() {
     companion object {
         var discord: Discord? = null
         val es = Executors.newCachedThreadPool()
-
-        fun getDate(): LocalDateTime? {
-            return LocalDateTime.now()
-        }
-
-        fun getTime(): Long {
-            return ZonedDateTime.now().toEpochSecond()
-        }
     }
 }

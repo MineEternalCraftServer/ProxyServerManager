@@ -18,13 +18,13 @@ import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import server.mecs.proxyservermanager.ProxyServerManager
 import server.mecs.proxyservermanager.ProxyServerManager.Companion.es
-import server.mecs.proxyservermanager.ProxyServerManager.Companion.getDate
 import server.mecs.proxyservermanager.commands.discord.McToDiscord
 import server.mecs.proxyservermanager.database.DiscordData.isSynced
 import server.mecs.proxyservermanager.database.DiscordData.syncAccount
 import server.mecs.proxyservermanager.database.DiscordData.unsyncAccount
 import server.mecs.proxyservermanager.database.MySQLManager
-import server.mecs.proxyservermanager.database.PlayerData.getIDfromMCID
+import server.mecs.proxyservermanager.getIDfromMCID
+import server.mecs.proxyservermanager.getTime.getDate
 import java.awt.Color
 import java.util.concurrent.ExecutionException
 import javax.security.auth.login.LoginException

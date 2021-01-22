@@ -10,7 +10,7 @@ import server.mecs.proxyservermanager.ProxyServerManager.Companion.es
 import server.mecs.proxyservermanager.database.DiscordData.isSynced
 import server.mecs.proxyservermanager.database.DiscordData.unsyncAccount
 import server.mecs.proxyservermanager.database.MySQLManager
-import server.mecs.proxyservermanager.database.PlayerData.getIDfromMCID
+import server.mecs.proxyservermanager.getIDfromMCID
 import java.util.*
 import java.util.concurrent.ExecutionException
 

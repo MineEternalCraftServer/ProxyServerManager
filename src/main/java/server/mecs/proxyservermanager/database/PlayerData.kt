@@ -1,30 +1,32 @@
 package server.mecs.proxyservermanager.database
 
+import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import server.mecs.proxyservermanager.getTime.getDate
+
 
 object PlayerData {
-    fun checkPlayerData(con: MySQLManager, player: ProxiedPlayer) {
-        con.query("SELECT * FROM player_data WHERE uuid='" + player.uniqueId + "';").use { rs ->
-            if (rs?.next()!!) {
-                if (rs.getString("mcid") != player.name) {
-                    con.execute("UPDATE player_data SET mcid='" + player.name + "' WHERE uuid='" + player.uniqueId + "';")
-                }
-                return
+    fun checkPlayerData(con: MongoDBManager, player: ProxiedPlayer) {
+        val count = con.queryCount("{uuid:'${player.uniqueId}'}")
+        when {
+            count == 0L -> {
+                con.queryInsertOne(
+                        "{'mcid':'${player.name}', " +
+                                "'uuid':'${player.uniqueId}', " +
+                                "'Discord':'null', " +
+                                "'Created':'${getDate()}'}"
+                )
             }
-            con.execute("INSERT INTO player_data (mcid,uuid,discord_link,isBanned,isMuted,ban_reason,mute_reason) " +
-                    "VALUES ('${player.name}','${player.uniqueId}','An_Unlinked_Player',false,false,'','');")
+
+            count == 1L -> {
+                con.queryUpdateOne("{uuid:'${player.uniqueId}'}", "{\$set:{mcid:'${player.name}'}}")
+            }
+
+            count >= 2L -> {
+                ProxyServer.getInstance().getPlayer(player.name).disconnect(*ComponentBuilder("§cInternal Error: Duplicated Player Data.").create())
+                ProxyServer.getInstance().logger.info("§c${player.name} Duplicated Player Data.")
+            }
         }
     }
-
-    fun getIDfromMCID(con: MySQLManager, mcid: String): Long? {
-        var result: Long? = null
-        con.query("SELECT * FROM player_data WHERE mcid='$mcid';").use { rs ->
-            if (rs?.next()!!) {
-                result = if (rs.getString("discord_link") == "An_Unlinked_Player") null
-                else rs.getLong("discord_link")
-            }
-            return result
-        }
-    }
-
 }

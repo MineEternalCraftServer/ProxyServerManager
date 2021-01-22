@@ -5,8 +5,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
-import server.mecs.proxyservermanager.ProxyServerManager.Companion.getDate
 import server.mecs.proxyservermanager.database.MongoDBManager
+import server.mecs.proxyservermanager.getTime.getDate
 
 class LogoutListener : Listener {
     @EventHandler

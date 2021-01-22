@@ -7,8 +7,8 @@ import net.md_5.bungee.api.plugin.Command
 import server.mecs.proxyservermanager.ProxyServerManager
 import server.mecs.proxyservermanager.ProxyServerManager.Companion.discord
 import server.mecs.proxyservermanager.ProxyServerManager.Companion.es
-import server.mecs.proxyservermanager.ProxyServerManager.Companion.getDate
 import server.mecs.proxyservermanager.commands.staffmessage.StaffMessage
+import server.mecs.proxyservermanager.getTime.getDate
 import java.awt.Color
 import java.util.*
 import kotlin.math.floor

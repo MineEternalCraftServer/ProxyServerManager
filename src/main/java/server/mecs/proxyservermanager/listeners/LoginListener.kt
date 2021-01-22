@@ -8,15 +8,15 @@ import net.md_5.bungee.event.EventHandler
 import server.mecs.proxyservermanager.ProxyServerManager
 import server.mecs.proxyservermanager.ProxyServerManager.Companion.es
 import server.mecs.proxyservermanager.database.MongoDBManager
-import server.mecs.proxyservermanager.database.MySQLManager
 import server.mecs.proxyservermanager.database.PlayerData.checkPlayerData
+import server.mecs.proxyservermanager.getTime.getDate
 
 class LoginListener(private val plugin: ProxyServerManager) : Listener {
     @EventHandler
     fun onLogin(e: PostLoginEvent) {
         val player = e.player
         es.execute {
-            MySQLManager(plugin, "loginListener").use { con ->
+            MongoDBManager(plugin, "PlayerData").use { con ->
                 checkPlayerData(con, player)
             }
         }
@@ -25,12 +25,8 @@ class LoginListener(private val plugin: ProxyServerManager) : Listener {
                 "{'mcid':'${e.player.name}', " +
                 "'uuid':'${e.player.uniqueId}', " +
                 "'address':'${player.socketAddress}'" +
-                "'date':'${ProxyServerManager.getDate()}'}"
+                "'date':'${getDate()}'}"
         )
-
-        if (player.uniqueId.toString().length != 32) {
-            ProxyServer.getInstance().pluginManager.dispatchCommand(ProxyServer.getInstance().console, "ban ${player.name} Your account has a security alert.")
-        }
 
         val prefix = when {
             player.hasPermission("group.owner") -> "§c[OWNER] "
