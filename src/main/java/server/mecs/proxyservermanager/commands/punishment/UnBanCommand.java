@@ -37,44 +37,43 @@ public class UnBanCommand extends Command {
             return;
         }
 
-        if (args[0] == sender.getName()) {
+        if (args[0].equals(sender.getName())) {
             sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
             return;
         }
 
-        try {
+        new Thread(() -> {
+
             if (!(CheckBanned.isBanned(plugin, args[0]))) {
                 sender.sendMessage(new ComponentBuilder("§cThat player has been not banned from this server.").create());
                 return;
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
 
-        try {
-            PunishUnBan.PunishUnBan(plugin, args[0]);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (!(CheckBanned.isBanned(plugin, args[0]))) {
-                sender.sendMessage(new ComponentBuilder("§aThat player has been successfully unbanned.").create());
-                StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been unbanned by " + sender.getName());
-
-                String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
-                String date = getDate.getDate();
-
-                if (sender instanceof ProxiedPlayer) {
-                    PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "UNBAN", "", date);
-                } else {
-                    PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "UNBAN", "", date);
-                }
-            } else {
-                sender.sendMessage(new ComponentBuilder("§cFailed to unbanned that player.").create());
+            try {
+                PunishUnBan.PunishUnBan(plugin, args[0]);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+
+            try {
+                if (!(CheckBanned.isBanned(plugin, args[0]))) {
+                    sender.sendMessage(new ComponentBuilder("§aThat player has been successfully unbanned.").create());
+                    StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been unbanned by " + sender.getName());
+
+                    String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
+                    String date = getDate.getDate();
+
+                    if (sender instanceof ProxiedPlayer) {
+                        PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "UNBAN", "", date);
+                    } else {
+                        PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "UNBAN", "", date);
+                    }
+                } else {
+                    sender.sendMessage(new ComponentBuilder("§cFailed to unbanned that player.").create());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
