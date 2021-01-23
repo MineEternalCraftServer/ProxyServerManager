@@ -6,17 +6,8 @@ import server.mecs.proxyservermanager.database.MySQLManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PunishUnBan extends Thread{
-
-    ProxyServerManager plugin;
-    String mcid;
-
-    public PunishUnBan(ProxyServerManager plugin, String mcid){
-        this.plugin = plugin;
-        this.mcid = mcid;
-    }
-
-    public void run(){
+public class PunishUnBan {
+    public static void PunishUnBan(ProxyServerManager plugin, String mcid) {
         try( MySQLManager mysql = new MySQLManager(plugin, "PunishUnBan");
              ResultSet rs = mysql.query("SELECT * FROM player_data WHERE mcid='" + mcid + "';")) {
             if (rs.next()){
@@ -26,11 +17,4 @@ public class PunishUnBan extends Thread{
             e.printStackTrace();
         }
     }
-
-    public static void PunishUnBan(ProxyServerManager plugin, String mcid) throws InterruptedException {
-        PunishUnBan punishUnBan = new PunishUnBan(plugin, mcid);
-        punishUnBan.start();
-        punishUnBan.join();
-    }
-
 }
