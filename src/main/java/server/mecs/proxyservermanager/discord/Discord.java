@@ -209,7 +209,7 @@ public class Discord extends ListenerAdapter {
         }
 
         try {
-            AccountSync.AccountSync(plugin, player, id);
+            new Thread(() -> AccountSync.AccountSync(plugin, player, id));
             if (CheckSynced.isSynced(plugin, null, id)){
                 guild.modifyNickname(guild.getMemberById(id), player).queue();
                 guild.addRoleToMember(id, guild.getRoleById(753582521685377034L)).queue();
