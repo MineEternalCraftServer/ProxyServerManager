@@ -49,7 +49,7 @@ public class UnMuteCommand extends Command {
                 sender.sendMessage(new ComponentBuilder("§cThat player has been not muted from this server.").create());
                 return;
             }
-            
+
             PunishUnMute.PunishUnMute(plugin, args[0]);
 
             try {
