@@ -69,24 +69,26 @@ public class McToDiscord extends Command {
         }
 
         if (args[0].equals("unsync")) {
-            try {
-                if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
-                    plugin.discord.removeRole(sender.getName());
-                    plugin.discord.guild.modifyNickname(plugin.discord.guild.getMemberById(getIDfromMCID.getIDfromMCID(plugin, sender.getName())), "An_Unlinked_Player").queue();
-                    try {
-                        AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            new Thread(() -> {
+                try {
+                    if (CheckSynced.isSynced(plugin, sender.getName(), null)) {
+                        plugin.discord.removeRole(sender.getName());
+                        plugin.discord.guild.modifyNickname(plugin.discord.guild.getMemberById(getIDfromMCID.getIDfromMCID(plugin, sender.getName())), "An_Unlinked_Player").queue();
+                        try {
+                            AccountUnSync.AccountUnSync(plugin, sender.getName(), null);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
+                                "§aYour account has been unsynced.").create());
+                        return;
                     }
-                    sender.sendMessage(new ComponentBuilder("§aアカウント同期を解除しました。\n" +
-                            "§aYour account has been unsynced.").create());
-                    return;
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +
-                    "§cYou have not synced your account.").create());
+                sender.sendMessage(new ComponentBuilder("§cあなたはアカウントを同期していません。\n" +
+                        "§cYou have not synced your account.").create());
+            });
         }
 
         if (args[0].equals("cancel")) {

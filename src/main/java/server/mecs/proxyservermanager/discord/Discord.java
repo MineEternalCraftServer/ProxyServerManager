@@ -125,13 +125,15 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent e) {
-        try {
-            if (CheckSynced.isSynced(plugin, null, e.getUser().getIdLong())) {
-                AccountUnSync.AccountUnSync(plugin, null, e.getUser().getIdLong());
+        new Thread(() -> {
+            try {
+                if (CheckSynced.isSynced(plugin, null, e.getUser().getIdLong())) {
+                    AccountUnSync.AccountUnSync(plugin, null, e.getUser().getIdLong());
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                ex.printStackTrace();
             }
-        } catch (InterruptedException | ExecutionException ex) {
-            ex.printStackTrace();
-        }
+        });
     }
 
     @Override
