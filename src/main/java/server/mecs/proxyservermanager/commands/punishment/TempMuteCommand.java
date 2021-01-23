@@ -42,14 +42,12 @@ public class TempMuteCommand extends Command {
             sender.sendMessage(new ComponentBuilder("§cYou can not punish yourself.").create());
             return;
         }
-        plugin.es.execute(() -> {
-            try {
-                if (CheckMuted.isMuted(plugin, args[0])) {
-                    sender.sendMessage(new ComponentBuilder("§cThat player has already been muted from this server.").create());
-                    return;
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+
+        new Thread(() -> {
+
+            if (CheckMuted.isMuted(plugin, args[0])) {
+                sender.sendMessage(new ComponentBuilder("§cThat player has already been muted from this server.").create());
+                return;
             }
 
             StringBuilder str = new StringBuilder();
@@ -58,11 +56,7 @@ public class TempMuteCommand extends Command {
             }
             String reason = str.toString().trim();
 
-            try {
-                PunishMute.PunishMute(plugin, args[0], reason);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            PunishMute.PunishMute(plugin, args[0], reason);
 
             try {
                 if (CheckMuted.isMuted(plugin, args[0])) {

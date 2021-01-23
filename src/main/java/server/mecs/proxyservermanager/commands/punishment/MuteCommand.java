@@ -43,51 +43,46 @@ public class MuteCommand extends Command {
             return;
         }
 
-        try {
+        new Thread(() -> {
+
             if (CheckMuted.isMuted(plugin, args[0])) {
                 sender.sendMessage(new ComponentBuilder("§cThat player has already been muted from this server.").create());
                 return;
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
 
-        StringBuilder str = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            str.append(args[i] + " ");
-        }
-        String reason = str.toString().trim();
-
-        try {
-            PunishMute.PunishMute(plugin, args[0], reason);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (CheckMuted.isMuted(plugin, args[0])) {
-
-                if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
-                    ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
-                    plugin.MuteMap.put(player.getUniqueId(), true);
-                }
-
-                sender.sendMessage(new ComponentBuilder("§aThat player has been successfully muted.").create());
-                StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been permanently muted by " + sender.getName() + " §cfor " + reason);
-
-                String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
-                String date = getDate.getDate();
-
-                if (sender instanceof ProxiedPlayer) {
-                    PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "MUTE", reason, date);
-                } else {
-                    PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "MUTE", reason, date);
-                }
-            } else {
-                sender.sendMessage(new ComponentBuilder("§cFailed to muted that player.").create());
+            StringBuilder str = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                str.append(args[i] + " ");
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+            String reason = str.toString().trim();
+
+            PunishMute.PunishMute(plugin, args[0], reason);
+
+            try {
+                if (CheckMuted.isMuted(plugin, args[0])) {
+
+                    if (ProxyServer.getInstance().getPlayer(args[0]) != null) {
+                        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
+                        plugin.MuteMap.put(player.getUniqueId(), true);
+                    }
+
+                    sender.sendMessage(new ComponentBuilder("§aThat player has been successfully muted.").create());
+                    StaffMessage.sendStaffMessage(plugin, args[0] + " §chas been permanently muted by " + sender.getName() + " §cfor " + reason);
+
+                    String uuid = getUUIDfromName.getUUIDfromName(plugin, args[0]);
+                    String date = getDate.getDate();
+
+                    if (sender instanceof ProxiedPlayer) {
+                        PunishmentLog.PunishmentLog(plugin, sender.getName(), ((ProxiedPlayer) sender).getUniqueId().toString(), args[0], uuid, "MUTE", reason, date);
+                    } else {
+                        PunishmentLog.PunishmentLog(plugin, sender.getName(), "Console", args[0], uuid, "MUTE", reason, date);
+                    }
+                } else {
+                    sender.sendMessage(new ComponentBuilder("§cFailed to muted that player.").create());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
