@@ -8,6 +8,9 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import server.mecs.proxyservermanager.ProxyServerManager;
 
+import static server.mecs.proxyservermanager.database.MongoDBManager.executeChatLogQueue;
+import static server.mecs.proxyservermanager.utils.getDate.getDate;
+
 public class ChatListener implements Listener {
 
     ProxyServerManager plugin;
@@ -23,11 +26,17 @@ public class ChatListener implements Listener {
 
         if (!(player instanceof ProxiedPlayer))return;
 
-        if (e.isCommand() || e.isProxyCommand())return;
-
         if (plugin.MuteMap.containsKey(((ProxiedPlayer) player).getUniqueId())){
             ((ProxiedPlayer) player).sendMessage(new ComponentBuilder("§cYou have been muted.").create());
             e.setCancelled(true);
+            return;
         }
+
+        executeChatLogQueue(
+                "{'mcid':'" + ((ProxiedPlayer) player).getName() +"', " +
+                        "'uuid':'" + ((ProxiedPlayer) player).getUniqueId() + "', " +
+                        "'chat':'" + e.getMessage() + "', " +
+                        "'date':'" + getDate() + "'}"
+        );
     }
 }

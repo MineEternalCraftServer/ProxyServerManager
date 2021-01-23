@@ -17,6 +17,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static server.mecs.proxyservermanager.database.MongoDBManager.setupChatLogBlockingQueue;
+
 public final class ProxyServerManager extends Plugin {
 
     public static Discord discord;
@@ -70,7 +72,9 @@ public final class ProxyServerManager extends Plugin {
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerListener(this, new LogoutListener(this));
         getProxy().getPluginManager().registerListener(this, new ChatListener(this));
-    }
+
+        setupChatLogBlockingQueue(this, "ChatLog");
+}
 
     @Override
     public void onDisable() {
