@@ -49,12 +49,8 @@ public class UnMuteCommand extends Command {
                 sender.sendMessage(new ComponentBuilder("§cThat player has been not muted from this server.").create());
                 return;
             }
-
-            try {
-                PunishUnMute.PunishUnMute(plugin, args[0]);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            
+            PunishUnMute.PunishUnMute(plugin, args[0]);
 
             try {
                 if (!(CheckMuted.isMuted(plugin, args[0]))) {
